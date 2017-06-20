@@ -320,7 +320,7 @@ public class AlgPrep {
 											subScore = subScore + e.tf * ((double)(evidenceDate.getTime()-beginningDateOfProject.getTime())/(long)(assignmentDate.getTime()-beginningDateOfProject.getTime()));
 											break;
 										case RECENCY2: //subScore = subScore + e.tf * recency2:
-											subScore = subScore + e.tf*recency2*Constants.TYPE_SIMILARITY[et]; //: This is the recency that is calculated based on one of the two cases above (case #1 and case #2).
+											subScore = subScore + e.tf*recency2; //: This is the recency that is calculated based on one of the two cases above (case #1 and case #2).
 											break;
 									}
 //									subScore = subScore + e.tf; //*recency*context or *recency*e.type...
