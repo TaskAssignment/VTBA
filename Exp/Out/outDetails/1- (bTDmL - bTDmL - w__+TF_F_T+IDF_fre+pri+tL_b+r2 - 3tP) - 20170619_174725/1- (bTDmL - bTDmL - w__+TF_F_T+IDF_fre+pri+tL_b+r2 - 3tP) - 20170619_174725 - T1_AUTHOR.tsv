@@ -1,0 +1,402 @@
+project	bugNumber	assignmentDate	ourTopRecommendedRealAssignee	ourTopRecommendedRealAssigneeRank	totalCommunityMembers	realAssigneesTillNow
+adobe/brackets	148	Mon Jan 30 22:39:20 MST 2012	njx	81	310	njx
+adobe/brackets	283	Sat Mar 10 00:30:49 MST 2012	peterflynn	131	310	peterflynn
+adobe/brackets	426	Thu Mar 15 22:56:03 MDT 2012	peterflynn	2	310	peterflynn
+adobe/brackets	852	Sun May 13 06:09:39 MDT 2012	ryanstewart	40	310	ryanstewart
+adobe/brackets	852	Tue May 15 21:55:00 MDT 2012	ryanstewart	1	310	ryanstewart
+adobe/brackets	852	Mon May 21 18:44:54 MDT 2012	ryanstewart	1	310	jasonsanjose, ryanstewart
+adobe/brackets	971	Tue Jun 12 21:13:20 MDT 2012	gruehle	42	310	gruehle
+adobe/brackets	971	Wed Jun 13 18:11:21 MDT 2012	gruehle	1	310	tvoliter, gruehle
+adobe/brackets	971	Wed Jun 13 22:57:15 MDT 2012	tvoliter	1	310	peterflynn, tvoliter, gruehle
+adobe/brackets	1280	Sat Jul 21 01:02:15 MDT 2012	redmunds	281	310	redmunds
+adobe/brackets	1606	Wed Oct 03 11:56:02 MDT 2012	denniskehrig	41	310	denniskehrig
+adobe/brackets	510	Wed Oct 03 13:25:32 MDT 2012	denniskehrig	1	310	denniskehrig
+adobe/brackets	1606	Wed Oct 03 19:34:01 MDT 2012	denniskehrig	1	310	jasonsanjose, denniskehrig
+adobe/brackets	1256	Thu Oct 04 13:36:48 MDT 2012	denniskehrig	2	310	denniskehrig
+adobe/brackets	510	Thu Oct 04 18:19:32 MDT 2012	denniskehrig	1	310	redmunds, denniskehrig
+adobe/brackets	1256	Wed Oct 10 16:08:24 MDT 2012	denniskehrig	1	310	raymondlim, denniskehrig
+adobe/brackets	1526	Thu Oct 18 17:54:13 MDT 2012	jdiehl	237	310	jdiehl
+adobe/brackets	510	Thu Oct 18 23:22:31 MDT 2012	redmunds	1	310	peterflynn, redmunds, denniskehrig
+adobe/brackets	2432	Sat Dec 29 22:08:10 MST 2012	soswow	119	310	soswow
+adobe/brackets	1974	Fri Jan 04 15:53:05 MST 2013	dangoor	181	310	dangoor
+adobe/brackets	2432	Tue Jan 08 19:14:11 MST 2013	soswow	1	310	soswow, jasonsanjose
+adobe/brackets	1974	Thu Jan 10 00:31:14 MST 2013	dangoor	1	310	jasonsanjose, dangoor
+adobe/brackets	2528	Mon Jan 14 22:45:14 MST 2013	jasonsanjose	1	310	jasonsanjose
+adobe/brackets	2528	Tue Jan 15 07:24:40 MST 2013	jasonsanjose	1	310	jasonsanjose, njx
+adobe/brackets	277	Wed Jan 16 21:35:21 MST 2013	redmunds	4	310	redmunds
+adobe/brackets	2520	Thu Jan 24 23:30:09 MST 2013	jasonsanjose	1	310	jasonsanjose
+adobe/brackets	2600	Fri Jan 25 13:58:06 MST 2013	dangoor	4	310	dangoor
+adobe/brackets	2625	Fri Jan 25 14:32:19 MST 2013	dangoor	2	310	dangoor
+adobe/brackets	2625	Fri Jan 25 19:16:36 MST 2013	dangoor	1	310	raymondlim, dangoor
+adobe/brackets	2600	Fri Jan 25 23:59:11 MST 2013	dangoor	1	310	jasonsanjose, dangoor
+adobe/brackets	2688	Mon Jan 28 18:30:10 MST 2013	kjgorman	246	310	kjgorman
+adobe/brackets	1913	Mon Jan 28 22:56:54 MST 2013	jasonsanjose	2	310	jasonsanjose
+adobe/brackets	2563	Mon Jan 28 22:56:54 MST 2013	jasonsanjose	1	310	jasonsanjose
+adobe/brackets	1997	Tue Jan 29 20:38:29 MST 2013	dangoor	3	310	dangoor
+adobe/brackets	2688	Tue Jan 29 21:30:34 MST 2013	kjgorman	1	310	redmunds, kjgorman
+adobe/brackets	2606	Tue Jan 29 21:56:40 MST 2013	dangoor	3	310	dangoor
+adobe/brackets	2606	Wed Jan 30 15:51:59 MST 2013	dangoor	1	310	dangoor
+adobe/brackets	2606	Wed Jan 30 17:52:19 MST 2013	dangoor	1	310	gruehle, dangoor
+adobe/brackets	2547	Thu Jan 31 23:36:47 MST 2013	jasonsanjose	2	310	jasonsanjose
+adobe/brackets	2820	Fri Feb 08 15:34:37 MST 2013	dangoor	2	310	dangoor
+adobe/brackets	2820	Fri Feb 08 19:44:56 MST 2013	dangoor	1	310	raymondlim, dangoor
+adobe/brackets	1994	Sat Feb 16 00:42:50 MST 2013	peterflynn	6	310	peterflynn
+adobe/brackets	2967	Mon Mar 04 16:17:54 MST 2013	denniskehrig	7	310	denniskehrig
+adobe/brackets	3032	Mon Mar 11 21:35:55 MDT 2013	jasonsanjose	2	310	jasonsanjose
+adobe/brackets	1863	Thu Mar 14 21:19:22 MDT 2013	redmunds	5	310	redmunds
+adobe/brackets	2858	Thu Mar 14 22:00:47 MDT 2013	iwehrman	233	310	iwehrman
+adobe/brackets	3163	Tue Mar 19 18:03:07 MDT 2013	dangoor	3	310	dangoor
+adobe/brackets	3163	Wed Mar 20 02:13:26 MDT 2013	dangoor	1	310	dangoor
+adobe/brackets	2608	Wed Mar 20 14:58:34 MDT 2013	dangoor	1	310	dangoor
+adobe/brackets	3327	Wed Apr 03 22:46:00 MDT 2013	raymondlim	4	310	raymondlim
+adobe/brackets	2608	Thu Apr 04 13:05:14 MDT 2013	dangoor	1	310	dangoor
+adobe/brackets	3372	Tue Apr 09 23:04:40 MDT 2013	jasonsanjose	3	310	jasonsanjose
+adobe/brackets	3394	Wed Apr 10 02:19:33 MDT 2013	jasonsanjose	2	310	jasonsanjose
+adobe/brackets	3372	Wed Apr 10 03:20:22 MDT 2013	jasonsanjose	1	310	redmunds, jasonsanjose
+adobe/brackets	3605	Thu Apr 25 16:45:34 MDT 2013	eztierney	114	310	eztierney
+adobe/brackets	3606	Thu Apr 25 16:45:34 MDT 2013	eztierney	15	310	eztierney
+adobe/brackets	3605	Fri May 03 19:04:57 MDT 2013	eztierney	1	310	eztierney, dloverin
+adobe/brackets	3606	Fri May 03 19:04:57 MDT 2013	eztierney	1	310	eztierney, dloverin
+adobe/brackets	3761	Mon May 20 22:16:16 MDT 2013	jasonsanjose	1	310	jasonsanjose
+adobe/brackets	3792	Mon May 20 22:16:16 MDT 2013	jasonsanjose	2	310	jasonsanjose
+adobe/brackets	3974	Mon Jun 03 19:32:57 MDT 2013	kjgorman	16	310	kjgorman
+adobe/brackets	3974	Tue Jun 04 04:04:15 MDT 2013	kjgorman	1	310	kjgorman, njx
+adobe/brackets	2957	Tue Jun 25 18:37:58 MDT 2013	jasonsanjose	1	310	jasonsanjose
+adobe/brackets	4333	Thu Jul 04 14:41:12 MDT 2013	busykai	135	310	busykai
+adobe/brackets	4404	Tue Jul 09 22:07:56 MDT 2013	jasonsanjose	2	310	jasonsanjose
+adobe/brackets	4404	Thu Jul 11 21:06:23 MDT 2013	jasonsanjose	1	310	peterflynn, jasonsanjose
+adobe/brackets	4333	Tue Jul 16 04:49:25 MDT 2013	busykai	1	310	raymondlim, busykai
+adobe/brackets	4446	Fri Jul 19 05:33:40 MDT 2013	g-palmer	182	310	g-palmer
+adobe/brackets	4869	Tue Aug 06 00:13:51 MDT 2013	zaggino	124	310	zaggino
+adobe/brackets	4870	Tue Aug 06 00:13:51 MDT 2013	zaggino	19	310	zaggino
+adobe/brackets	4762	Wed Aug 14 12:50:05 MDT 2013	testower	52	310	testower
+adobe/brackets	4721	Fri Aug 16 14:31:05 MDT 2013	dangoor	3	310	dangoor
+adobe/brackets	4721	Fri Aug 16 18:06:06 MDT 2013	dangoor	1	310	njx, dangoor
+adobe/brackets	4750	Fri Aug 16 20:13:10 MDT 2013	raymondlim	6	310	raymondlim
+adobe/brackets	4762	Fri Aug 16 20:15:01 MDT 2013	raymondlim	1	310	raymondlim, testower
+adobe/brackets	4623	Wed Aug 28 19:12:04 MDT 2013	dangoor	3	310	dangoor
+adobe/brackets	4623	Thu Aug 29 18:53:06 MDT 2013	dangoor	1	310	njx, dangoor
+adobe/brackets	5093	Mon Sep 09 19:19:11 MDT 2013	jasonsanjose	2	310	jasonsanjose
+adobe/brackets	5006	Tue Sep 10 19:50:24 MDT 2013	dangoor	3	310	dangoor
+adobe/brackets	5275	Mon Sep 23 13:36:32 MDT 2013	marcelgerber	112	310	marcelgerber
+adobe/brackets	5310	Mon Sep 23 22:41:53 MDT 2013	busykai	12	310	busykai
+adobe/brackets	5310	Tue Sep 24 22:02:52 MDT 2013	busykai	1	310	raymondlim, busykai
+adobe/brackets	5362	Fri Sep 27 16:13:41 MDT 2013	busykai	2	310	busykai
+adobe/brackets	5362	Sat Sep 28 00:00:50 MDT 2013	busykai	1	310	ingorichter, busykai
+adobe/brackets	5554	Thu Oct 17 20:56:25 MDT 2013	jukkah	301	310	jukkah
+adobe/brackets	5537	Thu Oct 24 21:32:53 MDT 2013	ingorichter	5	310	ingorichter
+adobe/brackets	5554	Fri Oct 25 22:14:48 MDT 2013	jukkah	1	310	jukkah, couzteau
+adobe/brackets	5575	Fri Nov 01 00:19:42 MDT 2013	njx	5	310	njx
+adobe/brackets	5699	Sun Nov 03 16:46:24 MST 2013	redmunds	8	310	redmunds
+adobe/brackets	5912	Sat Nov 09 01:21:43 MST 2013	couzteau	18	310	couzteau
+adobe/brackets	6018	Wed Nov 20 16:24:50 MST 2013	dangoor	4	310	dangoor
+adobe/brackets	52	Sun Nov 24 23:10:02 MST 2013	busykai	10	310	busykai
+adobe/brackets	6142	Fri Nov 29 18:33:52 MST 2013	busykai	2	310	busykai
+adobe/brackets	6142	Mon Dec 02 20:58:10 MST 2013	busykai	1	310	raymondlim, busykai
+adobe/brackets	4580	Tue Dec 24 05:11:11 MST 2013	stowball	260	310	stowball
+adobe/brackets	4580	Fri Jan 03 20:37:57 MST 2014	stowball	1	310	stowball, couzteau
+adobe/brackets	6441	Thu Jan 09 21:58:28 MST 2014	busykai	2	310	busykai
+adobe/brackets	6531	Wed Jan 15 16:04:14 MST 2014	dangoor	4	310	dangoor
+adobe/brackets	6531	Wed Jan 15 17:16:10 MST 2014	dangoor	1	310	bchintx, dangoor
+adobe/brackets	6441	Wed Jan 15 18:26:31 MST 2014	busykai	1	310	ingorichter, busykai
+adobe/brackets	6647	Sun Jan 26 22:03:24 MST 2014	busykai	4	310	busykai
+adobe/brackets	6647	Mon Jan 27 13:05:32 MST 2014	busykai	1	310	busykai, dangoor
+adobe/brackets	6828	Wed Feb 12 04:09:39 MST 2014	busykai	2	310	busykai
+adobe/brackets	5958	Tue Feb 18 19:04:31 MST 2014	dangoor	2	310	dangoor
+adobe/brackets	6241	Tue Feb 18 19:04:31 MST 2014	dangoor	1	310	dangoor
+adobe/brackets	6954	Sun Feb 23 17:04:30 MST 2014	raymondlim	7	310	raymondlim
+adobe/brackets	6828	Wed Feb 26 19:31:41 MST 2014	busykai	1	310	redmunds, busykai
+adobe/brackets	7161	Tue Mar 11 19:29:12 MDT 2014	dangoor	1	310	dangoor
+adobe/brackets	7161	Wed Mar 12 02:18:24 MDT 2014	dangoor	1	310	dangoor
+adobe/brackets	7229	Thu Mar 20 15:12:10 MDT 2014	dangoor	1	310	dangoor
+adobe/brackets	7280	Fri Mar 21 18:58:57 MDT 2014	winek	133	310	winek
+adobe/brackets	6661	Fri Mar 28 22:01:50 MDT 2014	busykai	3	310	busykai
+adobe/brackets	7307	Tue Apr 01 07:43:28 MDT 2014	peterflynn	11	310	peterflynn
+adobe/brackets	7418	Sat Apr 05 12:14:17 MDT 2014	oslego	236	310	oslego
+adobe/brackets	7442	Fri Apr 18 13:28:55 MDT 2014	dangoor	2	310	dangoor
+adobe/brackets	7442	Fri Apr 18 21:45:20 MDT 2014	dangoor	1	310	redmunds, dangoor
+adobe/brackets	7611	Thu Apr 24 00:09:03 MDT 2014	zaggino	12	310	zaggino
+adobe/brackets	7611	Thu Apr 24 00:26:04 MDT 2014	zaggino	1	310	redmunds, zaggino
+adobe/brackets	7673	Wed May 07 10:55:52 MDT 2014	fezvrasta	33	310	fezvrasta
+adobe/brackets	7673	Thu May 22 20:47:36 MDT 2014	fezvrasta	1	310	redmunds, fezvrasta
+adobe/brackets	7905	Mon Jun 02 19:42:06 MDT 2014	sbruchmann	153	310	sbruchmann
+adobe/brackets	8541	Thu Jul 24 20:59:00 MDT 2014	jeffrybooher	310	310	jeffrybooher
+adobe/brackets	8712	Mon Aug 11 09:55:26 MDT 2014	denisov21	237	310	denisov21
+adobe/brackets	8800	Mon Aug 18 21:26:40 MDT 2014	larz0	119	310	larz0
+adobe/brackets	9114	Wed Sep 17 20:53:43 MDT 2014	jeffrybooher	26	310	jeffrybooher
+adobe/brackets	9114	Fri Sep 19 23:03:52 MDT 2014	jeffrybooher	1	310	peterflynn, jeffrybooher
+adobe/brackets	9294	Mon Sep 29 12:10:54 MDT 2014	dangoor	3	310	dangoor
+adobe/brackets	7459	Wed Oct 01 20:49:06 MDT 2014	busykai	4	310	busykai
+adobe/brackets	9424	Fri Oct 03 16:39:42 MDT 2014	jeffrybooher	4	310	jeffrybooher
+adobe/brackets	9510	Tue Oct 21 16:15:58 MDT 2014	dangoor	2	310	dangoor
+adobe/brackets	9706	Mon Oct 27 22:08:49 MDT 2014	jeffrybooher	2	310	jeffrybooher
+adobe/brackets	9528	Thu Nov 06 19:07:38 MST 2014	jacse	134	310	jacse
+adobe/brackets	7459	Fri Nov 21 23:33:22 MST 2014	busykai	1	310	redmunds, busykai
+adobe/brackets	9975	Wed Nov 26 02:10:35 MST 2014	busykai	4	310	busykai
+adobe/brackets	9975	Tue Dec 02 20:09:35 MST 2014	busykai	1	310	redmunds, busykai
+adobe/brackets	6558	Wed Dec 03 01:37:20 MST 2014	ingorichter	13	310	ingorichter
+adobe/brackets	10142	Thu Dec 11 18:24:02 MST 2014	busykai	4	310	busykai
+adobe/brackets	6661	Thu Dec 11 22:14:21 MST 2014	busykai	1	310	ingorichter, busykai
+adobe/brackets	10259	Sun Dec 21 16:03:03 MST 2014	sbruchmann	12	310	sbruchmann
+adobe/brackets	10259	Sun Dec 21 16:15:21 MST 2014	sbruchmann	1	310	sbruchmann, redmunds
+adobe/brackets	10229	Mon Dec 22 23:06:18 MST 2014	busykai	1	310	busykai
+adobe/brackets	10239	Sat Dec 27 21:56:25 MST 2014	busykai	1	310	busykai
+adobe/brackets	10142	Wed Jan 14 22:40:40 MST 2015	busykai	1	310	redmunds, busykai
+adobe/brackets	10516	Wed Feb 04 18:15:50 MST 2015	sebaslv	62	310	sebaslv
+adobe/brackets	10229	Wed Feb 25 09:15:03 MST 2015	busykai	1	310	prafulvaishnav, busykai
+adobe/brackets	10754	Fri Mar 20 11:38:31 MDT 2015	prksingh	263	310	prksingh
+adobe/brackets	10786	Tue Mar 24 03:07:23 MDT 2015	humphd	272	310	humphd
+adobe/brackets	10984	Thu Apr 23 13:06:40 MDT 2015	petetnt	153	310	petetnt
+adobe/brackets	10965	Thu Apr 23 15:01:30 MDT 2015	humphd	4	310	humphd
+adobe/brackets	10965	Fri May 08 16:05:58 MDT 2015	humphd	1	310	humphd, busykai
+adobe/brackets	11088	Mon May 18 20:20:25 MDT 2015	jeffrybooher	10	310	jeffrybooher
+adobe/brackets	11088	Wed May 20 05:24:32 MDT 2015	jeffrybooher	1	310	jeffrybooher, nethip
+adobe/brackets	10786	Tue May 26 06:24:14 MDT 2015	humphd	1	310	humphd, nethip
+adobe/brackets	10821	Sun May 31 20:53:03 MDT 2015	marcelgerber	29	310	marcelgerber
+adobe/brackets	11552	Thu Aug 06 20:28:53 MDT 2015	zaggino	15	310	zaggino
+adobe/brackets	11552	Fri Sep 11 12:02:04 MDT 2015	zaggino	1	310	abose, zaggino
+adobe/brackets	11773	Tue Oct 06 12:12:38 MDT 2015	petetnt	12	310	petetnt
+adobe/brackets	11953	Wed Nov 25 10:49:43 MST 2015	borax12	94	310	borax12
+adobe/brackets	11963	Tue Dec 01 07:44:25 MST 2015	petetnt	1	310	petetnt
+adobe/brackets	11963	Tue Dec 01 10:07:59 MST 2015	petetnt	1	310	petetnt, abose
+adobe/brackets	10574	Sun Jan 03 19:26:57 MST 2016	ficristo	207	310	ficristo
+adobe/brackets	11953	Mon Jan 11 06:03:04 MST 2016	borax12	1	310	borax12
+adobe/brackets	11953	Mon Jan 11 07:13:05 MST 2016	borax12	1	310	borax12
+adobe/brackets	11826	Sat Jan 30 09:50:17 MST 2016	petetnt	13	310	petetnt
+adobe/brackets	11826	Fri Feb 05 07:01:05 MST 2016	petetnt	1	310	petetnt
+adobe/brackets	12332	Tue Mar 29 19:15:28 MDT 2016	petetnt	1	310	petetnt
+adobe/brackets	12630	Sun Jul 31 17:52:34 MDT 2016	petetnt	1	310	petetnt
+adobe/brackets	12630	Tue Aug 16 05:48:28 MDT 2016	petetnt	1	310	petetnt, zaggino
+adobe/brackets	11748	Mon Sep 05 17:04:35 MDT 2016	ficristo	19	310	ficristo
+adobe/brackets	12799	Thu Sep 29 07:15:01 MDT 2016	petetnt	2	310	petetnt
+adobe/brackets	11416	Tue Oct 18 16:55:06 MDT 2016	sahildua2305	135	310	sahildua2305
+angular/angular.js	-	-	-	-	-	-
+elastic/elasticsearch	-	-	-	-	-	-
+fog/fog	68	Thu Dec 02 21:37:03 MST 2010	geemus	265	665	geemus
+fog/fog	98	Sat Dec 04 23:48:44 MST 2010	geemus	1	665	geemus
+fog/fog	101	Mon Dec 06 19:47:39 MST 2010	geemus	1	665	geemus
+fog/fog	110	Fri Dec 10 21:25:03 MST 2010	geemus	1	665	geemus
+fog/fog	102	Thu Dec 16 20:05:15 MST 2010	geemus	1	665	geemus
+fog/fog	113	Thu Dec 16 23:31:24 MST 2010	geemus	1	665	geemus
+fog/fog	116	Tue Dec 21 19:27:37 MST 2010	geemus	1	665	geemus
+fog/fog	121	Wed Dec 22 18:20:13 MST 2010	geemus	1	665	geemus
+fog/fog	122	Thu Dec 23 21:54:02 MST 2010	geemus	1	665	geemus
+fog/fog	125	Thu Dec 30 20:54:22 MST 2010	geemus	1	665	geemus
+fog/fog	141	Mon Jan 24 19:46:02 MST 2011	geemus	1	665	geemus
+fog/fog	155	Tue Feb 08 18:06:44 MST 2011	geemus	1	665	geemus
+fog/fog	171	Tue Feb 15 19:26:04 MST 2011	geemus	1	665	geemus
+fog/fog	169	Wed Feb 16 00:53:45 MST 2011	geemus	1	665	geemus
+fog/fog	174	Tue Feb 22 18:38:34 MST 2011	geemus	1	665	geemus
+fog/fog	175	Tue Feb 22 19:06:32 MST 2011	geemus	1	665	geemus
+fog/fog	60	Wed Feb 23 00:36:15 MST 2011	geemus	1	665	geemus
+fog/fog	204	Mon Mar 07 19:02:54 MST 2011	geemus	1	665	geemus
+fog/fog	203	Mon Mar 07 19:54:38 MST 2011	geemus	1	665	geemus
+fog/fog	245	Mon Apr 04 16:43:13 MDT 2011	geemus	1	665	geemus
+fog/fog	246	Mon Apr 04 16:43:13 MDT 2011	geemus	1	665	geemus
+fog/fog	250	Thu Apr 07 17:11:40 MDT 2011	geemus	1	665	geemus
+fog/fog	251	Thu Apr 07 17:13:15 MDT 2011	geemus	1	665	geemus
+fog/fog	262	Wed Apr 27 00:45:05 MDT 2011	smerritt	185	665	smerritt
+fog/fog	397	Wed Jul 13 18:17:00 MDT 2011	jc00ke	305	665	jc00ke
+fog/fog	444	Wed Jul 20 22:18:05 MDT 2011	brianhartsock	36	665	brianhartsock
+fog/fog	444	Wed Jul 20 23:00:18 MDT 2011	brianhartsock	1	665	brianhartsock, tokengeek
+fog/fog	623	Mon Nov 28 17:42:22 MST 2011	camelpunch	642	665	camelpunch
+fog/fog	673	Thu Dec 22 20:38:08 MST 2011	nirvdrum	247	665	nirvdrum
+fog/fog	781	Mon Mar 12 16:23:24 MDT 2012	rb2k	611	665	rb2k
+fog/fog	781	Mon Mar 12 16:26:07 MDT 2012	rb2k	1	665	geemus, rb2k
+fog/fog	875	Wed Apr 25 15:06:52 MDT 2012	geemus	1	665	geemus
+fog/fog	884	Wed May 02 15:19:46 MDT 2012	jherdman	539	665	jherdman
+fog/fog	1093	Thu Aug 16 22:05:14 MDT 2012	bgentry	54	665	bgentry
+fog/fog	1098	Thu Aug 16 22:35:05 MDT 2012	bgentry	1	665	bgentry
+fog/fog	1093	Thu Aug 16 23:05:28 MDT 2012	bgentry	1	665	bgentry, geemus
+fog/fog	1351	Tue Dec 11 14:35:06 MST 2012	krames	40	665	krames
+fog/fog	1383	Tue Dec 18 10:58:09 MST 2012	rubiojr	265	665	rubiojr
+fog/fog	1383	Tue Dec 18 16:28:04 MST 2012	rubiojr	1	665	geemus, rubiojr
+fog/fog	1402	Thu Dec 20 15:15:56 MST 2012	krames	4	665	krames
+fog/fog	1493	Wed Jan 23 09:55:40 MST 2013	rkoster	506	665	rkoster
+fog/fog	1493	Wed Jan 23 10:22:03 MST 2013	rkoster	1	665	tokengeek, rkoster
+fog/fog	1605	Wed Feb 27 15:58:03 MST 2013	rubiojr	5	665	rubiojr
+fog/fog	1621	Tue Mar 05 00:31:59 MST 2013	nirvdrum	8	665	nirvdrum
+fog/fog	1652	Tue Mar 19 15:55:48 MDT 2013	domcleal	115	665	domcleal
+fog/fog	1822	Sun May 19 10:35:55 MDT 2013	kevinykchan	145	665	kevinykchan
+fog/fog	1871	Mon Jun 10 13:34:24 MDT 2013	tokengeek	6	665	tokengeek
+fog/fog	1871	Mon Jun 24 10:14:44 MDT 2013	tokengeek	1	665	tokengeek
+fog/fog	1921	Mon Jul 08 14:06:06 MDT 2013	krames	5	665	krames
+fog/fog	1921	Thu Jul 11 14:02:55 MDT 2013	krames	1	665	krames
+fog/fog	1921	Thu Jul 25 17:24:49 MDT 2013	krames	1	665	krames
+fog/fog	2451	Tue Aug 06 14:02:57 MDT 2013	ehowe	618	665	ehowe
+fog/fog	1434	Thu Aug 08 00:25:17 MDT 2013	singhgarima	280	665	singhgarima
+fog/fog	1434	Thu Aug 08 17:07:58 MDT 2013	singhgarima	1	665	geemus, singhgarima
+fog/fog	2248	Mon Oct 21 21:02:22 MDT 2013	pbonnell	544	665	pbonnell
+fog/fog	2307	Tue Oct 22 16:28:25 MDT 2013	timuralp	262	665	timuralp
+fog/fog	2316	Thu Oct 24 10:53:30 MDT 2013	tokengeek	5	665	tokengeek
+fog/fog	2279	Fri Oct 25 02:27:10 MDT 2013	nirvdrum	7	665	nirvdrum
+fog/fog	2373	Thu Nov 07 16:50:25 MST 2013	amh-mw	508	665	amh-mw
+fog/fog	2373	Thu Nov 07 18:00:47 MST 2013	amh-mw	1	665	nosborn, amh-mw
+fog/fog	2034	Fri Dec 27 02:44:37 MST 2013	miketheman	550	665	miketheman
+fog/fog	2034	Sun Dec 29 16:53:42 MST 2013	miketheman	1	665	geemus, miketheman
+fog/fog	2469	Wed Jan 08 21:48:32 MST 2014	elight	132	665	elight
+fog/fog	2507	Sat Jan 11 20:46:02 MST 2014	gaurish	583	665	gaurish
+fog/fog	2507	Thu Jan 16 15:14:35 MST 2014	gaurish	1	665	geemus, gaurish
+fog/fog	2586	Tue Jan 21 20:55:59 MST 2014	elight	3	665	elight
+fog/fog	2586	Thu Jan 23 20:14:56 MST 2014	elight	1	665	bugagazavr, elight
+fog/fog	2892	Wed Apr 30 13:20:36 MDT 2014	porridge	82	665	porridge
+fog/fog	2892	Fri May 09 12:52:50 MDT 2014	porridge	1	665	krames, porridge
+fog/fog	3008	Mon Jun 23 14:28:26 MDT 2014	krames	1	665	krames
+fog/fog	2938	Mon Jul 07 00:04:37 MDT 2014	timuralp	10	665	timuralp
+fog/fog	3041	Mon Jul 07 01:27:40 MDT 2014	timuralp	1	665	timuralp
+fog/fog	3151	Tue Sep 16 15:53:24 MDT 2014	jrunning	504	665	jrunning
+fog/fog	3434	Wed Feb 25 16:34:50 MST 2015	plribeiro3000	635	665	plribeiro3000
+fog/fog	3493	Fri Mar 20 12:29:57 MDT 2015	dhague	356	665	dhague
+fog/fog	3493	Fri Mar 20 17:13:25 MDT 2015	dhague	1	665	dhague
+fog/fog	3509	Wed Apr 01 17:23:42 MDT 2015	ihmccreery	427	665	ihmccreery
+fog/fog	3543	Wed Apr 29 03:33:05 MDT 2015	fherbert	403	665	fherbert
+fog/fog	3084	Wed Apr 29 11:27:16 MDT 2015	dhague	1	665	dhague
+fog/fog	3543	Fri May 01 15:54:26 MDT 2015	fherbert	1	665	geemus, fherbert
+fog/fog	3084	Wed May 13 19:11:01 MDT 2015	dhague	1	665	dhague, geemus
+fog/fog	3579	Thu Jun 04 19:22:06 MDT 2015	asebastian	44	665	asebastian
+fog/fog	3579	Fri Jul 24 01:37:04 MDT 2015	asebastian	1	665	nirvdrum, asebastian
+fog/fog	3679	Tue Sep 01 15:50:31 MDT 2015	pravi	303	665	pravi
+fog/fog	3715	Mon Oct 05 17:59:41 MDT 2015	martinb3	376	665	martinb3
+fog/fog	3785	Wed Dec 09 11:31:46 MST 2015	h0lyalg0rithm	586	665	h0lyalg0rithm
+fog/fog	3785	Wed Dec 09 14:45:08 MST 2015	h0lyalg0rithm	1	665	h0lyalg0rithm, geemus
+fog/fog	3784	Wed Dec 16 00:12:12 MST 2015	borski	616	665	borski
+fog/fog	3784	Fri Dec 18 00:01:37 MST 2015	borski	1	665	borski, plribeiro3000
+fog/fog	3876	Thu Apr 14 20:08:19 MDT 2016	temikus	192	665	temikus
+fog/fog	2892	Wed Jun 29 14:58:22 MDT 2016	geemus	2	665	geemus, krames, porridge
+html5rocks/www.html5rocks.com	-	-	-	-	-	-
+julialang/julia	-	-	-	-	-	-
+khan/khan-exercises	-	-	-	-	-	-
+lift/framework	904	Sun Feb 27 12:18:14 MST 2011	dchenbecker	59	68	dchenbecker
+lift/framework	927	Wed Mar 09 21:15:33 MST 2011	dchenbecker	1	68	dchenbecker
+lift/framework	876	Tue Mar 15 10:56:40 MDT 2011	etorreborre	37	68	etorreborre
+lift/framework	914	Tue Mar 15 10:56:40 MDT 2011	etorreborre	2	68	etorreborre
+lift/framework	830	Wed Mar 16 08:33:51 MDT 2011	dpp	18	68	dpp
+lift/framework	918	Wed Mar 16 08:47:34 MDT 2011	dpp	1	68	dpp
+lift/framework	888	Wed Mar 16 10:41:17 MDT 2011	dpp	2	68	dpp
+lift/framework	828	Wed Mar 16 12:27:04 MDT 2011	dpp	1	68	dpp
+lift/framework	943	Fri Mar 18 14:03:19 MDT 2011	dpp	1	68	dpp
+lift/framework	942	Fri Mar 18 14:22:12 MDT 2011	dpp	1	68	dpp
+lift/framework	947	Fri Mar 25 01:20:27 MDT 2011	dpp	1	68	dpp
+lift/framework	949	Fri Mar 25 01:43:10 MDT 2011	dpp	1	68	dpp
+lift/framework	951	Tue Mar 29 20:23:40 MDT 2011	davewhittaker	12	68	davewhittaker
+lift/framework	954	Wed Mar 30 21:57:13 MDT 2011	dpp	1	68	dpp
+lift/framework	955	Thu Apr 21 23:15:12 MDT 2011	dpp	1	68	dpp
+lift/framework	983	Thu Apr 21 23:15:12 MDT 2011	dpp	1	68	dpp
+lift/framework	965	Sat Apr 23 21:16:36 MDT 2011	dchenbecker	4	68	dchenbecker
+lift/framework	967	Tue Apr 26 15:23:46 MDT 2011	davewhittaker	3	68	davewhittaker
+lift/framework	987	Tue Apr 26 17:21:29 MDT 2011	dpp	2	68	dpp
+lift/framework	990	Tue Apr 26 18:23:21 MDT 2011	davewhittaker	3	68	davewhittaker
+lift/framework	986	Tue Apr 26 20:46:29 MDT 2011	davewhittaker	2	68	davewhittaker
+lift/framework	975	Wed Apr 27 08:50:17 MDT 2011	dpp	1	68	dpp
+lift/framework	991	Wed Apr 27 08:50:17 MDT 2011	dpp	1	68	dpp
+lift/framework	953	Wed Apr 27 10:22:45 MDT 2011	dpp	1	68	dpp
+lift/framework	962	Wed Apr 27 10:22:45 MDT 2011	dpp	1	68	dpp
+lift/framework	979	Wed Apr 27 10:22:45 MDT 2011	dpp	1	68	dpp
+lift/framework	989	Wed Apr 27 10:22:45 MDT 2011	dpp	1	68	dpp
+lift/framework	993	Wed Apr 27 10:22:45 MDT 2011	dpp	1	68	dpp
+lift/framework	966	Wed Apr 27 22:27:31 MDT 2011	dpp	1	68	dpp
+lift/framework	1003	Sat May 14 10:39:44 MDT 2011	dpp	1	68	dpp
+lift/framework	995	Sat May 14 14:50:27 MDT 2011	dpp	1	68	dpp
+lift/framework	971	Sat May 14 16:31:48 MDT 2011	dpp	1	68	dpp
+lift/framework	1006	Sat May 14 19:57:17 MDT 2011	dpp	1	68	dpp
+lift/framework	978	Sat May 14 20:43:10 MDT 2011	dpp	1	68	dpp
+lift/framework	1004	Sun May 15 18:31:10 MDT 2011	indrajitr	20	68	indrajitr
+lift/framework	1012	Tue May 17 21:44:31 MDT 2011	dpp	1	68	dpp
+lift/framework	1016	Fri May 20 02:50:26 MDT 2011	nafg	63	68	nafg
+lift/framework	1017	Fri May 20 02:55:47 MDT 2011	nafg	2	68	nafg
+lift/framework	1018	Fri May 20 03:51:50 MDT 2011	nafg	1	68	nafg
+lift/framework	1021	Tue May 24 18:48:08 MDT 2011	nafg	2	68	nafg
+lift/framework	371	Tue May 24 23:27:05 MDT 2011	nafg	1	68	nafg
+lift/framework	1027	Sun May 29 22:20:53 MDT 2011	nafg	2	68	nafg
+lift/framework	1026	Tue May 31 05:32:54 MDT 2011	nafg	2	68	nafg
+lift/framework	1028	Tue May 31 15:31:20 MDT 2011	davewhittaker	3	68	davewhittaker
+lift/framework	1037	Thu Jun 09 20:49:10 MDT 2011	dpp	1	68	dpp
+lift/framework	1048	Fri Jun 17 14:47:03 MDT 2011	davewhittaker	2	68	davewhittaker
+lift/framework	1038	Mon Jun 20 07:06:32 MDT 2011	jeppenejsum	54	68	jeppenejsum
+lift/framework	1059	Mon Jun 27 08:26:20 MDT 2011	etorreborre	7	68	etorreborre
+lift/framework	1055	Mon Jun 27 20:36:16 MDT 2011	dchenbecker	6	68	dchenbecker
+lift/framework	1019	Thu Jun 30 23:36:36 MDT 2011	dpp	2	68	dpp
+lift/framework	1054	Thu Jun 30 23:37:16 MDT 2011	dpp	1	68	dpp
+lift/framework	992	Thu Jun 30 23:53:25 MDT 2011	dpp	1	68	dpp
+lift/framework	1036	Fri Jul 01 00:07:44 MDT 2011	dpp	1	68	dpp
+lift/framework	1049	Fri Jul 01 00:11:01 MDT 2011	dpp	1	68	dpp
+lift/framework	1029	Fri Jul 01 00:23:49 MDT 2011	dpp	1	68	dpp
+lift/framework	1061	Wed Jul 06 19:37:25 MDT 2011	dpp	1	68	dpp
+lift/framework	1057	Wed Jul 06 19:55:32 MDT 2011	dpp	1	68	dpp
+lift/framework	1072	Thu Jul 28 05:42:29 MDT 2011	nafg	2	68	nafg
+lift/framework	1068	Thu Jul 28 06:00:05 MDT 2011	nafg	2	68	nafg
+lift/framework	1076	Thu Jul 28 06:04:46 MDT 2011	nafg	1	68	nafg
+lift/framework	1083	Thu Aug 04 17:39:41 MDT 2011	kevinpeno	53	68	kevinpeno
+lift/framework	1068	Fri Aug 05 05:47:06 MDT 2011	nafg	1	68	nafg
+lift/framework	1072	Fri Aug 05 05:47:06 MDT 2011	nafg	1	68	nafg
+lift/framework	1076	Fri Aug 05 05:47:06 MDT 2011	nafg	1	68	nafg
+lift/framework	1079	Wed Aug 10 18:11:42 MDT 2011	etorreborre	3	68	etorreborre
+lift/framework	1083	Sun Aug 14 14:48:13 MDT 2011	kevinpeno	1	68	kevinpeno, indrajitr
+lift/framework	1086	Tue Aug 23 20:53:30 MDT 2011	dpp	2	68	dpp
+lift/framework	1094	Tue Aug 23 20:53:30 MDT 2011	dpp	2	68	dpp
+lift/framework	919	Tue Aug 23 21:16:50 MDT 2011	dpp	1	68	dpp
+lift/framework	1089	Tue Aug 23 21:25:33 MDT 2011	dpp	1	68	dpp
+lift/framework	1091	Wed Aug 24 15:21:04 MDT 2011	dpp	1	68	dpp
+lift/framework	938	Wed Aug 24 15:52:53 MDT 2011	dpp	1	68	dpp
+lift/framework	1095	Wed Aug 24 15:52:53 MDT 2011	dpp	1	68	dpp
+lift/framework	1093	Wed Aug 24 21:41:31 MDT 2011	etorreborre	6	68	etorreborre
+lift/framework	1030	Thu Aug 25 18:08:28 MDT 2011	dpp	1	68	dpp
+lift/framework	1082	Thu Aug 25 19:02:10 MDT 2011	dpp	1	68	dpp
+lift/framework	1032	Thu Aug 25 19:58:55 MDT 2011	dpp	1	68	dpp
+lift/framework	1034	Thu Aug 25 19:58:55 MDT 2011	dpp	1	68	dpp
+lift/framework	1025	Thu Aug 25 20:31:25 MDT 2011	dpp	1	68	dpp
+lift/framework	1024	Thu Aug 25 20:54:32 MDT 2011	dpp	1	68	dpp
+lift/framework	1087	Mon Aug 29 03:13:41 MDT 2011	nafg	2	68	nafg
+lift/framework	1088	Mon Aug 29 03:13:41 MDT 2011	nafg	6	68	nafg
+lift/framework	1099	Mon Aug 29 21:29:18 MDT 2011	etorreborre	3	68	etorreborre
+lift/framework	1085	Mon Aug 29 23:49:48 MDT 2011	pbrant	17	68	pbrant
+lift/framework	1113	Wed Sep 14 21:04:18 MDT 2011	dpp	1	68	dpp
+lift/framework	1116	Fri Sep 16 12:44:22 MDT 2011	jeppenejsum	9	68	jeppenejsum
+lift/framework	1110	Wed Sep 21 09:05:35 MDT 2011	pbrant	4	68	pbrant
+lift/framework	1121	Fri Sep 30 08:13:26 MDT 2011	jeppenejsum	5	68	jeppenejsum
+lift/framework	1123	Fri Sep 30 13:39:33 MDT 2011	tuhlmann	44	68	tuhlmann
+lift/framework	1124	Sun Oct 02 19:19:05 MDT 2011	jeppenejsum	4	68	jeppenejsum
+lift/framework	1127	Tue Oct 04 19:15:13 MDT 2011	jeppenejsum	1	68	jeppenejsum
+lift/framework	1131	Tue Oct 11 15:33:57 MDT 2011	davewhittaker	8	68	davewhittaker
+lift/framework	1132	Wed Oct 19 16:11:48 MDT 2011	etorreborre	7	68	etorreborre
+lift/framework	1133	Thu Oct 20 14:54:52 MDT 2011	etorreborre	2	68	etorreborre
+lift/framework	1136	Mon Oct 24 18:42:33 MDT 2011	etorreborre	1	68	etorreborre
+lift/framework	1138	Wed Nov 02 18:34:28 MDT 2011	andreak	22	68	andreak
+lift/framework	1137	Wed Nov 02 18:56:47 MDT 2011	andreak	4	68	andreak
+lift/framework	1140	Wed Nov 02 21:05:30 MDT 2011	andreak	1	68	andreak
+lift/framework	1129	Fri Nov 04 14:58:22 MDT 2011	jeppenejsum	4	68	jeppenejsum
+lift/framework	1142	Fri Nov 04 15:37:59 MDT 2011	jeppenejsum	5	68	jeppenejsum
+lift/framework	961	Sun Nov 06 17:30:37 MST 2011	indrajitr	8	68	indrajitr
+lift/framework	1115	Mon Nov 07 20:13:39 MST 2011	jeppenejsum	3	68	jeppenejsum
+lift/framework	1083	Wed Nov 09 17:45:13 MST 2011	indrajitr	2	68	kevinpeno, indrajitr
+lift/framework	1150	Wed Nov 09 22:03:26 MST 2011	andreak	7	68	andreak
+lift/framework	1152	Fri Nov 18 20:21:04 MST 2011	andreak	2	68	andreak
+lift/framework	1153	Mon Nov 28 18:59:23 MST 2011	andreak	1	68	andreak
+lift/framework	1156	Mon Dec 12 08:35:04 MST 2011	shadowfiend	63	68	shadowfiend
+lift/framework	1158	Mon Dec 12 19:47:05 MST 2011	dpp	3	68	dpp
+lift/framework	1161	Tue Dec 13 19:15:40 MST 2011	shadowfiend	5	68	shadowfiend
+lift/framework	1162	Thu Dec 15 13:19:59 MST 2011	andreak	1	68	andreak
+lift/framework	937	Fri Dec 16 00:16:01 MST 2011	rusho	20	68	rusho
+lift/framework	1180	Mon Jan 09 20:17:01 MST 2012	dpp	2	68	dpp
+lift/framework	1070	Mon Jan 09 21:37:33 MST 2012	dpp	1	68	dpp
+lift/framework	1126	Mon Jan 09 21:56:37 MST 2012	dpp	1	68	dpp
+lift/framework	1177	Mon Jan 09 22:25:23 MST 2012	dpp	1	68	dpp
+lift/framework	1173	Mon Jan 09 22:41:19 MST 2012	dpp	1	68	dpp
+lift/framework	1196	Fri Feb 10 02:57:44 MST 2012	hoffrocket	33	68	hoffrocket
+lift/framework	1418	Fri Mar 15 13:55:27 MDT 2013	obruchez	41	68	obruchez
+lift/framework	1418	Mon Mar 18 07:06:29 MDT 2013	obruchez	1	68	obruchez, jonifreeman
+lift/framework	1452	Thu May 30 16:31:56 MDT 2013	dpp	2	68	dpp
+lift/framework	1455	Thu May 30 16:55:38 MDT 2013	dpp	1	68	dpp
+lift/framework	1485	Fri Aug 09 02:21:38 MDT 2013	fmpwizard	18	68	fmpwizard
+lift/framework	1573	Sat Jun 14 15:19:14 MDT 2014	eltimn	63	68	eltimn
+lift/framework	1628	Sun Oct 19 19:41:24 MDT 2014	fmpwizard	8	68	fmpwizard
+lift/framework	1635	Sat Nov 01 03:12:10 MDT 2014	fmpwizard	2	68	fmpwizard
+lift/framework	1617	Sat Nov 01 03:23:46 MDT 2014	fmpwizard	1	68	fmpwizard
+lift/framework	1732	Sat Dec 05 18:25:28 MST 2015	shadowfiend	11	68	shadowfiend
+lift/framework	1759	Fri Jan 29 00:10:36 MST 2016	eltimn	7	68	eltimn
+lift/framework	1759	Sun Jan 31 13:48:34 MST 2016	eltimn	1	68	fmpwizard, eltimn
+rails/rails	-	-	-	-	-	-
+saltstack/salt	-	-	-	-	-	-
+travis-ci/travis-ci	-	-	-	-	-	-
+tryghost/ghost	-	-	-	-	-	-
+yui/yui3	-	-	-	-	-	-

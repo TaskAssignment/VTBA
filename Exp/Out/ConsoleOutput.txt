@@ -1,0 +1,262 @@
+-----------------------------------
+Bug assignment experiment:
+    Started ...
+        Folder currently exists. No need to re-create it.
+    1- Loading the graph from files "nodeWeights.tsv" and "edgeWeights.tsv":
+        Started ...
+        1-1- Reading node weights:
+            Started ...
+            46,115 nodes have been read.
+            Finished.
+        1-2- Reading edge weights:
+            Started ...
+            393,105 edges have been read.
+            Finished.
+        Finished.
+    2- Parsing 7-projects.tsv:
+        Started ...
+        Number of records read: 13
+        Finished.
+    3- Parsing 1-bugs-T5_ALL_TYPES.tsv:
+        Started ...
+        64,474 records have been read.
+        Finished.
+------ 0
+------ 11
+    4- Reading needed assignment file(s):
+        Started ...
+        4-1-T1_AUTHOR- Parsing 9-ASSIGNMENTS_T1_AUTHOR.tsv:
+            Started ...
+            9,642 records have been read.
+            Finished.
+        4-2-T2_COAUTHOR- Parsing 9-ASSIGNMENTS_T2_COAUTHOR.tsv:
+            Started ...
+            1,374 records have been read.
+            Finished.
+        4-3-T3_ADMIN_CLOSER- Parsing 9-ASSIGNMENTS_T3_ADMIN_CLOSER.tsv:
+            Started ...
+            66,856 records have been read.
+            Finished.
+        4-4-T4_DRAFTED_A- Parsing 9-ASSIGNMENTS_T4_DRAFTED_A.tsv:
+            Started ...
+            15,123 records have been read.
+            Finished.
+        4-5-T5_ALL_TYPES- Parsing 9-ASSIGNMENTS_T5_ALL_TYPES.tsv:
+            Started ...
+            93,016 records have been read.
+            Finished.
+        Finished.
+    5- Reading non-assignment evidence in "2-commits.tsv" and indexing them:
+        Started ...
+        Finished.
+    Folder currently exists. No need to re-create it.
+    6- Running prediction algorithm for 5 assignment file(s):
+        Started ...
+        6-1- Predicting "T1_AUTHOR" assignments:
+            Started ...
+            6-1-2- Parsing 10-COMMUNITY_T1_AUTHOR.tsv:
+                Started ...
+                9,469 records have been read.
+                Finished.
+            6-1-3- Iterating over assignment evidence of type "T1_AUTHOR" (in a project by project basis) and adding them to the evidence index:
+                Started ...
+                lift/framework (projectId: 1295197): 	expertise of 129 bug assignments indexed.
+                saltstack/salt (projectId: 1390248): 	expertise of 2341 bug assignments indexed.
+                travis-ci/travis-ci (projectId: 1420493): 	expertise of 13 bug assignments indexed.
+                julialang/julia (projectId: 1644196): 	expertise of 1753 bug assignments indexed.
+                khan/khan-exercises (projectId: 1723225): 	expertise of 19 bug assignments indexed.
+                fog/fog (projectId: 203666): 	expertise of 91 bug assignments indexed.
+                adobe/brackets (projectId: 2935735): 	expertise of 171 bug assignments indexed.
+                angular/angular.js (projectId: 460078): 	expertise of 503 bug assignments indexed.
+                elastic/elasticsearch (projectId: 507775): 	expertise of 2188 bug assignments indexed.
+                html5rocks/www.html5rocks.com (projectId: 5238231): 	expertise of 90 bug assignments indexed.
+                rails/rails (projectId: 8514): 	expertise of 854 bug assignments indexed.
+                yui/yui3 (projectId: 85670): 	expertise of 120 bug assignments indexed.
+                tryghost/ghost (projectId: 9852918): 	expertise of 1370 bug assignments indexed.
+                Finished.
+            6-1-4- Assigning:
+                Started ...
+                6-1-4-1- lift/framework (projectId: 1295197)
+                    129 bug assignments predicted.
+                6-1-4-2- fog/fog (projectId: 203666)
+                    91 bug assignments predicted.
+                6-1-4-3- adobe/brackets (projectId: 2935735)
+                    171 bug assignments predicted.
+                Finished.
+            6-1-5- Summarizing assignment statistics and writing:
+                Started ...
+                6-1-5-1- Detailed stats (in 5 files in a separate folder) ...
+                6-1-5-2- Overal stats (in 5 files in the main output folder) ...
+                6-1-5-2- Summary overal stats (in one file in the main output folder) ...
+                Finished.
+            Finished.
+        6-2- Predicting "T2_COAUTHOR" assignments:
+            Started ...
+            6-2-2- Parsing 10-COMMUNITY_T2_COAUTHOR.tsv:
+                Started ...
+                9,448 records have been read.
+                Finished.
+            6-2-3- Iterating over assignment evidence of type "T2_COAUTHOR" (in a project by project basis) and adding them to the evidence index:
+                Started ...
+                lift/framework (projectId: 1295197): 	expertise of 97 bug assignments indexed.
+                saltstack/salt (projectId: 1390248): 	expertise of 233 bug assignments indexed.
+                travis-ci/travis-ci (projectId: 1420493): 	expertise of 2 bug assignments indexed.
+                julialang/julia (projectId: 1644196): 	expertise of 54 bug assignments indexed.
+                khan/khan-exercises (projectId: 1723225): 	expertise of 5 bug assignments indexed.
+                fog/fog (projectId: 203666): 	expertise of 27 bug assignments indexed.
+                adobe/brackets (projectId: 2935735): 	expertise of 6 bug assignments indexed.
+                angular/angular.js (projectId: 460078): 	expertise of 196 bug assignments indexed.
+                elastic/elasticsearch (projectId: 507775): 	expertise of 498 bug assignments indexed.
+                html5rocks/www.html5rocks.com (projectId: 5238231): 	expertise of 1 bug assignments indexed.
+                rails/rails (projectId: 8514): 	expertise of 138 bug assignments indexed.
+                yui/yui3 (projectId: 85670): 	expertise of 4 bug assignments indexed.
+                tryghost/ghost (projectId: 9852918): 	expertise of 113 bug assignments indexed.
+                Finished.
+            6-2-4- Assigning:
+                Started ...
+                6-2-4-1- lift/framework (projectId: 1295197)
+                    97 bug assignments predicted.
+                6-2-4-2- fog/fog (projectId: 203666)
+                    27 bug assignments predicted.
+                6-2-4-3- adobe/brackets (projectId: 2935735)
+                    6 bug assignments predicted.
+                Finished.
+            6-2-5- Summarizing assignment statistics and writing:
+                Started ...
+                6-2-5-1- Detailed stats (in 5 files in a separate folder) ...
+                6-2-5-2- Overal stats (in 5 files in the main output folder) ...
+                6-2-5-2- Summary overal stats (in one file in the main output folder) ...
+                Finished.
+            Finished.
+        6-3- Predicting "T3_ADMIN_CLOSER" assignments:
+            Started ...
+            6-3-2- Parsing 10-COMMUNITY_T3_ADMIN_CLOSER.tsv:
+                Started ...
+                14,632 records have been read.
+                Finished.
+            6-3-3- Iterating over assignment evidence of type "T3_ADMIN_CLOSER" (in a project by project basis) and adding them to the evidence index:
+                Started ...
+                lift/framework (projectId: 1295197): 	expertise of 225 bug assignments indexed.
+                saltstack/salt (projectId: 1390248): 	expertise of 10681 bug assignments indexed.
+                travis-ci/travis-ci (projectId: 1420493): 	expertise of 5716 bug assignments indexed.
+                julialang/julia (projectId: 1644196): 	expertise of 9589 bug assignments indexed.
+                khan/khan-exercises (projectId: 1723225): 	expertise of 654 bug assignments indexed.
+                fog/fog (projectId: 203666): 	expertise of 1146 bug assignments indexed.
+                adobe/brackets (projectId: 2935735): 	expertise of 6554 bug assignments indexed.
+                angular/angular.js (projectId: 460078): 	expertise of 7671 bug assignments indexed.
+                elastic/elasticsearch (projectId: 507775): 	expertise of 10362 bug assignments indexed.
+                html5rocks/www.html5rocks.com (projectId: 5238231): 	expertise of 638 bug assignments indexed.
+                rails/rails (projectId: 8514): 	expertise of 9366 bug assignments indexed.
+                yui/yui3 (projectId: 85670): 	expertise of 541 bug assignments indexed.
+                tryghost/ghost (projectId: 9852918): 	expertise of 3713 bug assignments indexed.
+                Finished.
+            6-3-4- Assigning:
+                Started ...
+                6-3-4-1- lift/framework (projectId: 1295197)
+                    225 bug assignments predicted.
+                6-3-4-2- fog/fog (projectId: 203666)
+                    1,146 bug assignments predicted.
+                6-3-4-3- adobe/brackets (projectId: 2935735)
+                    5,000 bug assignments ...
+                    6,554 bug assignments predicted.
+                Finished.
+            6-3-5- Summarizing assignment statistics and writing:
+                Started ...
+                6-3-5-1- Detailed stats (in 5 files in a separate folder) ...
+                6-3-5-2- Overal stats (in 5 files in the main output folder) ...
+                6-3-5-2- Summary overal stats (in one file in the main output folder) ...
+                Finished.
+            Finished.
+        6-4- Predicting "T4_DRAFTED_A" assignments:
+            Started ...
+            6-4-2- Parsing 10-COMMUNITY_T4_DRAFTED_A.tsv:
+                Started ...
+                9,470 records have been read.
+                Finished.
+            6-4-3- Iterating over assignment evidence of type "T4_DRAFTED_A" (in a project by project basis) and adding them to the evidence index:
+                Started ...
+                lift/framework (projectId: 1295197): 	expertise of 115 bug assignments indexed.
+                saltstack/salt (projectId: 1390248): 	expertise of 2274 bug assignments indexed.
+                travis-ci/travis-ci (projectId: 1420493): 	expertise of 603 bug assignments indexed.
+                julialang/julia (projectId: 1644196): 	expertise of 1345 bug assignments indexed.
+                khan/khan-exercises (projectId: 1723225): 	expertise of 179 bug assignments indexed.
+                fog/fog (projectId: 203666): 	expertise of 63 bug assignments indexed.
+                adobe/brackets (projectId: 2935735): 	expertise of 3731 bug assignments indexed.
+                angular/angular.js (projectId: 460078): 	expertise of 1288 bug assignments indexed.
+                elastic/elasticsearch (projectId: 507775): 	expertise of 3132 bug assignments indexed.
+                html5rocks/www.html5rocks.com (projectId: 5238231): 	expertise of 269 bug assignments indexed.
+                rails/rails (projectId: 8514): 	expertise of 944 bug assignments indexed.
+                yui/yui3 (projectId: 85670): 	expertise of 235 bug assignments indexed.
+                tryghost/ghost (projectId: 9852918): 	expertise of 945 bug assignments indexed.
+                Finished.
+            6-4-4- Assigning:
+                Started ...
+                6-4-4-1- lift/framework (projectId: 1295197)
+                    115 bug assignments predicted.
+                6-4-4-2- fog/fog (projectId: 203666)
+                    63 bug assignments predicted.
+                6-4-4-3- adobe/brackets (projectId: 2935735)
+                    3,731 bug assignments predicted.
+                Finished.
+            6-4-5- Summarizing assignment statistics and writing:
+                Started ...
+                6-4-5-1- Detailed stats (in 5 files in a separate folder) ...
+                6-4-5-2- Overal stats (in 5 files in the main output folder) ...
+                6-4-5-2- Summary overal stats (in one file in the main output folder) ...
+                Finished.
+            Finished.
+        6-5- Predicting "T5_ALL_TYPES" assignments:
+            Started ...
+            6-5-2- Parsing 10-COMMUNITY_T5_ALL_TYPES.tsv:
+                Started ...
+                14,722 records have been read.
+                Finished.
+            6-5-3- Iterating over assignment evidence of type "T5_ALL_TYPES" (in a project by project basis) and adding them to the evidence index:
+                Started ...
+                lift/framework (projectId: 1295197): 	expertise of 566 bug assignments indexed.
+                saltstack/salt (projectId: 1390248): 	expertise of 15533 bug assignments indexed.
+                travis-ci/travis-ci (projectId: 1420493): 	expertise of 6334 bug assignments indexed.
+                julialang/julia (projectId: 1644196): 	expertise of 12748 bug assignments indexed.
+                khan/khan-exercises (projectId: 1723225): 	expertise of 857 bug assignments indexed.
+                fog/fog (projectId: 203666): 	expertise of 1327 bug assignments indexed.
+                adobe/brackets (projectId: 2935735): 	expertise of 10462 bug assignments indexed.
+                angular/angular.js (projectId: 460078): 	expertise of 9658 bug assignments indexed.
+                elastic/elasticsearch (projectId: 507775): 	expertise of 16184 bug assignments indexed.
+                html5rocks/www.html5rocks.com (projectId: 5238231): 	expertise of 998 bug assignments indexed.
+                rails/rails (projectId: 8514): 	expertise of 11305 bug assignments indexed.
+                yui/yui3 (projectId: 85670): 	expertise of 902 bug assignments indexed.
+                tryghost/ghost (projectId: 9852918): 	expertise of 6142 bug assignments indexed.
+                Finished.
+            6-5-4- Assigning:
+                Started ...
+                6-5-4-1- lift/framework (projectId: 1295197)
+                    566 bug assignments predicted.
+                6-5-4-2- fog/fog (projectId: 203666)
+                    1,327 bug assignments predicted.
+                6-5-4-3- adobe/brackets (projectId: 2935735)
+                    5,000 bug assignments ...
+                    10,000 bug assignments ...
+                    10,462 bug assignments predicted.
+                Finished.
+            6-5-5- Summarizing assignment statistics and writing:
+                Started ...
+                6-5-5-1- Detailed stats (in 5 files in a separate folder) ...
+                6-5-5-2- Overal stats (in 5 files in the main output folder) ...
+                6-5-5-2- Summary overal stats (in one file in the main output folder) ...
+                Finished.
+            Finished.
+        Finished.
+        Finished.
+    Finished.
+-----------------------------------
+Summary (time, etc.):
+Max frequency of words in an evidence:3604 (just FYI).
+Total time: 45.8 seconds.
+    Initial time (Reading graph, bug and project info, before the loop): 0.8
+    Initial time (Reading assignments, and, reading and indexing non-assignment evidence, before the loop): 14.8
+    Whole loop time: 30.3 seconds.
+        Reading communities files (in the loop): 0.3
+        Reading bugs and indexing extra time (in the loop): 9.5
+        Net assignment time (in the loop): 20.4 seconds.
+-----------------------------------
+-----------------------------------
