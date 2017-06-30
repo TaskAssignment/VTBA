@@ -395,17 +395,17 @@ public class Algorithm {//test 9
 	//------------------------------------------------------------------------------------------------------------------------
 	public static void experiment(){
 		int[] assignmentTypesToTriage = new int[]{ //At least one of these items should be equal to YES:
-				1/*1=YES, 0=NO*//*T1_AUTHOR*/, 
-				1/*1=YES, 0=NO*//*T2_COAUTHOR*/, 
-				1/*1=YES, 0=NO*//*T3_ADMIN_CLOSER*/, 
-				1/*1=YES, 0=NO*//*T4_DRAFTED_A*/, 
+				0/*1=YES, 0=NO*//*T1_AUTHOR*/, 
+				0/*1=YES, 0=NO*//*T2_COAUTHOR*/, 
+				0/*1=YES, 0=NO*//*T3_ADMIN_CLOSER*/, 
+				0/*1=YES, 0=NO*//*T4_DRAFTED_A*/, 
 				1/*1=YES, 0=NO*//*T5_ALL_TYPES*/, 
 				}; 
 
 		//Evidence types to consider: [bugAssignment, commit, PR, bugComment, commitComment, PRComment]
 		int[] evidenceTypes = new int[]{
 				1/*1=YES, 0=NO*//*assignedBug=b*/, 
-				1/*1=YES, 0=NO*//*commit=c*/, 
+				0/*1=YES, 0=NO*//*commit=c*/, 
 				0/*1=YES, 0=NO*//*PR=p*/, 
 				0/*1=YES, 0=NO*//*bugComment=bC*/, 
 				0/*1=YES, 0=NO*//*commitComment=cC*/, 
