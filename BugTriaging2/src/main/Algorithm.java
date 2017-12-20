@@ -49,6 +49,7 @@ public class Algorithm {//test 9
 			boolean isMainRun, int[] assignmentTypesToTriage, int[] evidenceTypes, int totalEvidenceTypes_count,  
 			String experimentTitle, String experimentDetails, 
 			BTOption1_whatToAddToAllBugs option1_whatToAddToAllBugs, BTOption2_w option2_w, BTOption3_TF option3_TF, BTOption4_IDF option4_IDF, BTOption5_prioritizePAs option5_prioritizePAs, BTOption6_whatToAddToAllCommits option6_whatToAddToAllCommits,  BTOption7_whenToCountTextLength option7_whenToCountTextLength, BTOption8_recency option8_recency,
+			boolean justCalculateOriginalTFIDF, 
 			FileManipulationResult fMR,
 			boolean wrapOutputInLines, int showProgressInterval, int indentationLevel, long testOrReal, String writeMessageStep) {
 		MyUtils.println("-----------------------------------", indentationLevel);
@@ -69,6 +70,14 @@ public class Algorithm {//test 9
 		graph.loadGraph(SOInputPath, "nodeWeights.tsv", "edgeWeights.tsv", localFMR, 
 				wrapOutputInLines, showProgressInterval*1000, indentationLevel+1, Constants.THIS_IS_REAL, MyUtils.concatTwoWriteMessageSteps(writeMessageStep, "1"));
 		totalFMR = MyUtils.addFileManipulationResults(totalFMR, localFMR);
+		HashSet<String> stopWords = new HashSet<String>();
+		if (justCalculateOriginalTFIDF){
+			stopWords = TSVManipulations.readUniqueFieldFromTSV(SOInputPath, "stopWords.tsv", 0, 1, 
+					LogicalOperation.NO_CONDITION, 
+					0, ConditionType.NOTHING, "", FieldType.NOT_IMPORTANT, 
+					0, ConditionType.NOTHING, "", FieldType.NOT_IMPORTANT,
+					true, indentationLevel+1, 100000, Constants.THIS_IS_REAL, MyUtils.concatTwoWriteMessageSteps(writeMessageStep,"2"));
+		}
 //		//Testing:
 //		System.out.println("Testing:");
 //		System.out.println("javascript: " + graph.getNodeWeight("javascript"));
@@ -84,7 +93,7 @@ public class Algorithm {//test 9
 				LogicalOperation.NO_CONDITION,
 				0, ConditionType.NOTHING, "", FieldType.NOT_IMPORTANT,
 				0, ConditionType.NOTHING, "", FieldType.NOT_IMPORTANT,
-				wrapOutputInLines, showProgressInterval, indentationLevel+1, Constants.THIS_IS_REAL, MyUtils.concatTwoWriteMessageSteps(writeMessageStep, "2"));
+				wrapOutputInLines, showProgressInterval, indentationLevel+1, Constants.THIS_IS_REAL, MyUtils.concatTwoWriteMessageSteps(writeMessageStep, "3"));
 		
 		TreeMap<String, String[]> projectIdBugNumberAndTheirBugInfo = TSVManipulations.readUniqueCombinedKeyAndItsValueFromTSV(
 				inputPath, "1-bugs-"+Constants.ASSIGNED_BUGS_TYPES__SHORT_DESCRIPTIONS[4]+".tsv", localFMR, null, 
@@ -93,7 +102,7 @@ public class Algorithm {//test 9
 				LogicalOperation.NO_CONDITION, 
 				0, ConditionType.NOTHING, "", FieldType.NOT_IMPORTANT, 
 				0, ConditionType.NOTHING, "", FieldType.NOT_IMPORTANT, 
-				wrapOutputInLines, showProgressInterval*1000, indentationLevel+1, Constants.THIS_IS_REAL, "3");
+				wrapOutputInLines, showProgressInterval*1000, indentationLevel+1, Constants.THIS_IS_REAL, "4");
 		totalFMR = MyUtils.addFileManipulationResults(totalFMR, localFMR);
 		
 		//Preparing the 'evidenceTypesToConsider' array for AlgPrep.calculateScoreOfDeveloperForBugAssignment():
@@ -122,7 +131,7 @@ public class Algorithm {//test 9
 
 		if (wrapOutputInLines)
 			MyUtils.println("-----------------------------------", indentationLevel+1);
-		MyUtils.println(MyUtils.concatTwoWriteMessageSteps(writeMessageStep, "4- Reading needed assignment file(s):"), indentationLevel+1);
+		MyUtils.println(MyUtils.concatTwoWriteMessageSteps(writeMessageStep, "5- Reading needed assignment file(s):"), indentationLevel+1);
 		MyUtils.println("Started ...", indentationLevel+2);
 
 		//Defining an arrayList for all five types of assignments:
@@ -136,12 +145,12 @@ public class Algorithm {//test 9
 						LogicalOperation.NO_CONDITION, 
 						0, ConditionType.NOTHING, "", FieldType.NOT_IMPORTANT, 
 						0, ConditionType.NOTHING, "", FieldType.NOT_IMPORTANT, 
-						wrapOutputInLines, showProgressInterval*1000, indentationLevel+2, Constants.THIS_IS_REAL, MyUtils.concatTwoWriteMessageSteps(writeMessageStep, "4-"+Integer.toString(i+1)+"-"+Constants.ASSIGNED_BUGS_TYPES__SHORT_DESCRIPTIONS[i]));
+						wrapOutputInLines, showProgressInterval*1000, indentationLevel+2, Constants.THIS_IS_REAL, MyUtils.concatTwoWriteMessageSteps(writeMessageStep, "5-"+Integer.toString(i+1)+"-"+Constants.ASSIGNED_BUGS_TYPES__SHORT_DESCRIPTIONS[i]));
 				totalFMR = MyUtils.addFileManipulationResults(totalFMR, localFMR);
 			}
 			else{
 				projectsAndTheirAssignments = new TreeMap<String, ArrayList<String[]>>(); //creating an empty TreeMap, just to add to projectsAndTheirAssignments_AL. It is because we want to use static indexes for each type later in readNonAssignmentEvidence. Also in the main loop of assignment, when we iterate over assignments of a specific type.
-				MyUtils.println(MyUtils.concatTwoWriteMessageSteps(writeMessageStep, "4-"+Integer.toString(i+1)+"- \""+Constants.ASSIGNED_BUGS_TYPES__SHORT_DESCRIPTIONS[i]+"\" --> is not configured to use or run the prediction algorithm on."), indentationLevel+2);
+				MyUtils.println(MyUtils.concatTwoWriteMessageSteps(writeMessageStep, "5-"+Integer.toString(i+1)+"- \""+Constants.ASSIGNED_BUGS_TYPES__SHORT_DESCRIPTIONS[i]+"\" --> is not configured to use or run the prediction algorithm on."), indentationLevel+2);
 			}
 			//Now, add the created "projectsAndTheirAssignments" (which either is containing assignment information or not [based on assignmentTypesToTriage values]) to projectsAndTheirAssignments_AL:
 			projectsAndTheirAssignments__AL_forDifferentAssignmetTypes.add(projectsAndTheirAssignments);
@@ -161,7 +170,8 @@ public class Algorithm {//test 9
 				projectId_Login_Tags_TypesAndTheirEvidence, 
 				graph, 
 				option1_whatToAddToAllBugs, option2_w, option3_TF, option4_IDF, option5_prioritizePAs, option6_whatToAddToAllCommits, option7_whenToCountTextLength, 
-				wrapOutputInLines, showProgressInterval*100, indentationLevel+1, MyUtils.concatTwoWriteMessageSteps(writeMessageStep, "5"));
+				justCalculateOriginalTFIDF, 
+				wrapOutputInLines, showProgressInterval*100, indentationLevel+1, MyUtils.concatTwoWriteMessageSteps(writeMessageStep, "6"));
 		totalFMR = MyUtils.addFileManipulationResults(totalFMR, localFMR);
 
 		String detailedAssignmentResultsSubfolderName = AlgPrep.createFolderForResults(outputPath+"\\"+Constants.ASSIGNMENT_RESULTS_OVERAL_FOLDER_NAME, experimentTitle, isMainRun, localFMR, indentationLevel);
@@ -178,11 +188,11 @@ public class Algorithm {//test 9
 			for (int j=ASSIGNMENT_TYPES_TO_TRIAGE.T1_AUTHOR.ordinal(); j<=ASSIGNMENT_TYPES_TO_TRIAGE.T5_ALL_TYPES.ordinal(); j++)
 				if (assignmentTypesToTriage[j] == YES)
 					TOTAL_NUMBER_OF_ASSIGNMENT_TYPES_TO_TRIAGE++;
-			MyUtils.println(MyUtils.concatTwoWriteMessageSteps(writeMessageStep, "6- Running prediction algorithm for " + TOTAL_NUMBER_OF_ASSIGNMENT_TYPES_TO_TRIAGE + " assignment file(s):"), indentationLevel+1);
+			MyUtils.println(MyUtils.concatTwoWriteMessageSteps(writeMessageStep, "7- Running prediction algorithm for " + TOTAL_NUMBER_OF_ASSIGNMENT_TYPES_TO_TRIAGE + " assignment file(s):"), indentationLevel+1);
 			MyUtils.println("Started ...", indentationLevel+2);
 
 			for (int i=ASSIGNMENT_TYPES_TO_TRIAGE.T1_AUTHOR.ordinal(); i<=ASSIGNMENT_TYPES_TO_TRIAGE.T5_ALL_TYPES.ordinal(); i++){
-				String step = MyUtils.concatTwoWriteMessageSteps(writeMessageStep, "6-"+(i+1));
+				String step = MyUtils.concatTwoWriteMessageSteps(writeMessageStep, "7-"+(i+1));
 				if (assignmentTypesToTriage[i] == YES){
 					Date d4 = new Date();
 					if (wrapOutputInLines)
@@ -211,6 +221,7 @@ public class Algorithm {//test 9
 								projects, projectIdBugNumberAndTheirBugInfo, projectId_Login_Tags_TypesAndTheirEvidence, 
 								graph, localFMR, 
 								option1_whatToAddToAllBugs, option2_w, option3_TF, option4_IDF, option5_prioritizePAs, option6_whatToAddToAllCommits, option7_whenToCountTextLength, 
+								justCalculateOriginalTFIDF, 
 								wrapOutputInLines, showProgressInterval*100, indentationLevel+3, MyUtils.concatTwoWriteMessageSteps(writeMessageStep, step+"-3"));
 						totalFMR = MyUtils.addFileManipulationResults(totalFMR, localFMR);
 						if (totalFMR.errors > 0){
@@ -248,7 +259,8 @@ public class Algorithm {//test 9
 								ArrayList<String[]> community = projectsAndTheirCommunities.get(projectId);
 								HashMap<String, HashMap<String, Integer>> realAssignees = new HashMap<String, HashMap<String, Integer>>(); //bugNumber --> {login --> rank}
 								HashMap<String, HashMap<String, HashMap<Integer, ArrayList<Evidence>>>> logins_Tags_TypesAndTheirEvidence = projectId_Login_Tags_TypesAndTheirEvidence.get(projectId);
-
+								HashMap<String, HashSet<String>> wordAndTheDevelopersUsedThemUpToNow = new HashMap<String, HashSet<String>>();
+								
 								int numberOfBugsProcessed = 0;
 								HashSet<String> previousAssigneesInThisProject = new HashSet<>();
 								for (int j=0; j<assignmentsOfThisProject.size(); j++){ 
@@ -261,11 +273,12 @@ public class Algorithm {//test 9
 									int[] originalNumberOfWordsInBugText_array = new int[1];
 									String bugText = AlgPrep.getBugText(project, queryBug, originalNumberOfWordsInBugText_array, option1_whatToAddToAllBugs);
 									int originalNumberOfWordsInBugText = originalNumberOfWordsInBugText_array[0];
-									WordsAndCounts wAC = new WordsAndCounts(bugText, option7_whenToCountTextLength, originalNumberOfWordsInBugText);
+									WordsAndCounts wAC = new WordsAndCounts(bugText, option7_whenToCountTextLength, originalNumberOfWordsInBugText, stopWords);
 									//
 									if (wAC.size == 0)
 										MyUtils.println("Warning: Empty bug text!", indentationLevel+5);
-									//								
+									//	
+									//Calculating the word count for idf:
 									for (int k=0; k<community.size(); k++){
 										String login = community.get(k)[0];
 										scores.put(login, 
@@ -277,6 +290,7 @@ public class Algorithm {//test 9
 														wAC, originalNumberOfWordsInBugText, 
 														j+1, 
 														project.overalStartingDate, 
+														justCalculateOriginalTFIDF, community.size(), wordAndTheDevelopersUsedThemUpToNow, 
 														option2_w, option4_IDF, option5_prioritizePAs, option8_recency,
 														indentationLevel+5));
 									}
@@ -294,6 +308,21 @@ public class Algorithm {//test 9
 									previousAssigneesOfThisBugAndTheirRanks.put(a.login, UNKNOWN_RANK);
 									//Rank the list of all community members, then update the ranks of real assignees in realAssignees. Finally return the assignee with the best rank: 
 									Assignee ra = AlgPrep.updateRankOfRealAssigneesAndReturnTheBestAssignee(realAssignees, a.bugNumber, scores, random);
+
+									//Update the stuff used for calculating idf:
+									if (justCalculateOriginalTFIDF){
+										for (int k=0; k<wAC.size; k++)
+											if (wordAndTheDevelopersUsedThemUpToNow.containsKey(wAC.words[k])){
+												HashSet<String> logins = wordAndTheDevelopersUsedThemUpToNow.get(wAC.words[k]);
+												logins.add(a.login);
+											}
+//												wordAndTheDevelopersUsedThemUpToNow.put(wAC.words[k], wordAndTheDevelopersUsedThemUpToNow.get(wAC.words[k])+1);
+											else{
+												HashSet<String> logins = new HashSet<String>();
+												logins.add(a.login);
+												wordAndTheDevelopersUsedThemUpToNow.put(wAC.words[k], logins);
+											}
+									}
 
 									//Adding this assignment to projectsAndTheirAssignmentStats:
 									AssignmentStat assignmentStat = new AssignmentStat(a.bugNumber, a.date, ra.login, ra.rank, realAssignees.get(a.bugNumber));
@@ -419,8 +448,11 @@ public class Algorithm {//test 9
 //				0  //Constants.OTHER_ASSIGNMENT_OPTIONS__CONCATENATE_MAIN_LANGUAGES_TO_THE_THE_COMMIT				--> concatenate "project main language" to the commit evidence
 //				};
 		
-//		boolean isMainRun = true; //: means that we are running the code for all projects.
-		boolean isMainRun = false; //: means that we are running the code for only three test projects ("adobe/brackets", "fog/fog" and "lift/framework").
+		boolean isMainRun = true; //: means that we are running the code for all projects.
+//		boolean isMainRun = false; //: means that we are running the code for only three test projects ("adobe/brackets", "fog/fog" and "lift/framework").
+		
+//		boolean justCalculateOriginalTFIDF = true; //Un-comment this line and comment the next line if you want to run the TF-IDF experiment (which is only a small part of code) to compare against the results of the rest of this program (which is most of this code).
+		boolean justCalculateOriginalTFIDF = false;
 		
 //for (int num=0; num<2; num++)
 		for (BTOption1_whatToAddToAllBugs option1_whatToAddToAllBugs: BTOption1_whatToAddToAllBugs.values()){//: What to be added to the bugs by default.
@@ -484,13 +516,21 @@ public class Algorithm {//test 9
 											if (option6_whatToAddToAllCommits == BTOption6_whatToAddToAllCommits.ADD_mL || option6_whatToAddToAllCommits == BTOption6_whatToAddToAllCommits.ADD_PTD_mL)
 												usedCommitAsEvidence_Text = usedCommitAsEvidence_Text + "mL";
 										} 
+										String inputDir = "";
 										String methodology = ""; 
+										if (justCalculateOriginalTFIDF){
+											methodology = "OnlyOrigTFIDF";
+											inputDir = Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__GH__EXPERIMENT_TFIDF;
+										}
+										else
+											inputDir = Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__GH__EXPERIMENT_MAIN;
+										
 										switch (option2_w){//: Term weighting:
 											case NO_TERM_WEIGHTING:
-												methodology = "noW";
+												methodology = methodology + "+" + "noW";
 												break;
 											case USE_TERM_WEIGHTING:
-												methodology = "w__";
+												methodology = methodology + "+" + "w__";
 												break;
 										}
 										switch (option3_TF){//: TF formula:
@@ -570,10 +610,11 @@ public class Algorithm {//test 9
 										FileManipulationResult fMR = new FileManipulationResult();
 //										for (int num=0; num<3; num++) 
 										for (int num=0; num<1; num++)
-											bugAssignment(Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__GH__EXPERIMENT, Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__SO__EXPERIMENT, Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__EXPERIMENT_OUTPUT, "outSum", 
+											bugAssignment(inputDir, Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__SO__EXPERIMENT, Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__EXPERIMENT_OUTPUT, "outSum", 
 												isMainRun, assignmentTypesToTriage, evidenceTypes, totalEvidenceTypes_count, 
 												experimentTitle, "-",
 												option1_whatToAddToAllBugs, option2_w, option3_TF, option4_IDF, option5_prioritizePAs, option6_whatToAddToAllCommits, option7_whenToCountTextLength, option8_recency,
+												justCalculateOriginalTFIDF, 
 												fMR,
 												false, 5000, 0, Constants.THIS_IS_REAL, "");		
 										if (fMR.errors > 0){

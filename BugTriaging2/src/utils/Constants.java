@@ -104,9 +104,11 @@ public class Constants {
 	//*******************************************************************************************************************************
 	//*******************************************************************************************************************************
 //	public static final String DATASET_DIRECTORY_FOR_THE_ALGORITHM__SOURCE = "C:\\BT2\\BugTriaging2";
-	public static final String DATASET_DIRECTORY_FOR_THE_ALGORITHM__GH__EXPERIMENT = "C:\\BT2\\Exp\\In\\GH";
-	public static final String DATASET_DIRECTORY_FOR_THE_ALGORITHM__SO__EXPERIMENT = "C:\\BT2\\Exp\\In\\SO";
-	public static final String DATASET_DIRECTORY_FOR_THE_ALGORITHM__EXPERIMENT_OUTPUT = "C:\\BT2\\Exp\\Out";
+	public static final String DATASET_DIRECTORY_BASE = "C:\\BT2\\BugTriaging2C";
+	public static final String DATASET_DIRECTORY_FOR_THE_ALGORITHM__GH__EXPERIMENT_MAIN = DATASET_DIRECTORY_BASE + "\\Exp\\In\\GH\\DSForMainExp";
+	public static final String DATASET_DIRECTORY_FOR_THE_ALGORITHM__GH__EXPERIMENT_TFIDF = DATASET_DIRECTORY_BASE + "\\Exp\\In\\GH\\DSForTFIDFExp";
+	public static final String DATASET_DIRECTORY_FOR_THE_ALGORITHM__SO__EXPERIMENT = DATASET_DIRECTORY_BASE + "\\Exp\\In\\SO";
+	public static final String DATASET_DIRECTORY_FOR_THE_ALGORITHM__EXPERIMENT_OUTPUT = DATASET_DIRECTORY_BASE + "\\Exp\\Out";
 	//*******************************************************************************************************************************
 	//*******************************************************************************************************************************
 	//*******************************************************************************************************************************

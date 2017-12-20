@@ -154,165 +154,106 @@ public class AlgPrep {
 			WordsAndCounts wAC, int originalNumberOfWordsInBugText, 
 			int seqNum, //seqNum is the sequence number of the bug. It is used for determining the recency based on FASE paper formula (number of bugs between a bugAssignmentEvidence and the current bug). 
 			Date beginningDateOfProject, 
+			boolean justCalculateOriginalTFIDF, int numberOfCommunityMembers, HashMap<String, HashSet<String>> wordsAndTheDevelopersUsedThemUpToNow, 
 			BTOption2_w option2_w, BTOption4_IDF option4_IDF, BTOption5_prioritizePAs option5_prioritizePAs, BTOption8_recency option8_recency, 
 			int indentationLevel){
 		//This method calculates the score of developer "login" for assignment "a". 
 		//		It considers the evidence of expertise from beginning of project until the time of "a". 
 		//			Later, it also considers the evidence in other projects (the project family experiment) using projectsAndTheirAssignments.
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////WORKING VERSION: ///////////////////////////////////////////////////
-//		Double score = 0.0;
-//		Double subScore = 0.0;
-//		Double termWeight;
-//		int errors1 = 0;
-//		int errors2 = 0;
-//		int errors3_possibly = 0;
-//		int errors4_bothAreOne = 0;
-//		if (logins_Tags_TypesAndTheirEvidence_InAProject.containsKey(login)){ //: means that if this user has an evidence ever!
-//			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-//			Date assignmentDate = a.date;
-////			Date beginningDate = dateFormat.parse(beginningDateOfProject);
-//			Date evidenceDate;
-//			double recency1, recency2, recency3;
-//			HashMap<String, HashMap<Integer, ArrayList<Evidence>>> tags_TypesAndTheirEvidence_ForADeveloperInAProject = logins_Tags_TypesAndTheirEvidence_InAProject.get(login);
-//			for (int i=0; i<wAC.size; i++){//: Iterating over keywords (tags) of bug.
-//				if (tags_TypesAndTheirEvidence_ForADeveloperInAProject.containsKey(wAC.words[i])){//: means that if this user has an evidence including this tag.
-//					HashMap<Integer, ArrayList<Evidence>> typesAndEvidenceOfThisDeveloperForATag = tags_TypesAndTheirEvidence_ForADeveloperInAProject.get(wAC.words[i]); //: this is assuming that the non-SO-tag keywords are removed from the text of a bug.
-//					termWeight = graph.getNodeWeight(wAC.words[i]);
-//					//Considering all different types of evidence (0: Constants.EVIDENCE_TYPE__BUG_TITLE to Constants.EVIDENCE_TYPES__COUNT-1):
-//					subScore = 0.0;
-//					for (int et_index=0; et_index<evidenceTypesToConsider_count; et_index++){//et: "evidence type"
-//						int et = evidenceTypesToConsider[et_index];
-//						if (typesAndEvidenceOfThisDeveloperForATag.containsKey(et)){
-//							ArrayList<Evidence> type_x_evidenceOfADeveloperForATag = typesAndEvidenceOfThisDeveloperForATag.get(et); //: get specific evidence types (e.g., bug title, bug description, commit message, etc.)
-//							int numberOfType_x_evidence = type_x_evidenceOfADeveloperForATag.size();
-//							for (int j=0; j<numberOfType_x_evidence; j++){//: Iterating over all evidence (of the current user in the current project) for this tag.
-//								Evidence e = type_x_evidenceOfADeveloperForATag.get(j);
-//								if (e.date.compareTo(a.date) < 0){ //: Only consider the evidence before the date of assignment "a".  
-//									evidenceDate = e.date;
-//									if (et < Constants.NUMBER_OF_ASSIGNEE_TYPES){ //: 0 to 4, which are the assignment types.
-//										if (e.bASeqNum >= seqNum)
-//											errors1++;
-//										if (e.bASeqNum == Constants.SEQ_NUM____THIS_IS_NOT__B_A_EVIDENCE)
-//											System.out.println("ERROR!");
-//										recency3 = 1.0/(seqNum - e.bASeqNum);
-//									}
-//									else{//: 11 (Constants.EVIDENCE_TYPE_COMMIT) to 15 (EVIDENCE_TYPE_PR_COMMENT).
-//										if (e.nonBA_virtualSeqNum[assignmentTypeToTriage] > seqNum)
-//											errors2++;
-//										if (e.nonBA_virtualSeqNum[assignmentTypeToTriage] == seqNum){
-//											errors3_possibly++;
-//											System.out.println("seqNum: " + seqNum);
-//											if (e.nonBA_virtualSeqNum[assignmentTypeToTriage] == 1)
-//												errors4_bothAreOne++;
-//										}
-////											System.out.println("ERROR! The sequence number of the bug is smaller than the sequence number of the evidence!");
-//										if (e.nonBA_virtualSeqNum[assignmentTypeToTriage] == Constants.SEQ_NUM____NO_NEED_TO_TRIAGE_THIS_TYPE___OR___THIS_IS_NOT__NON_B_A_EVIDENCE)
-//											System.out.println("ERROR!");
-//										recency3 = 1.0/(seqNum - e.nonBA_virtualSeqNum[assignmentTypeToTriage]);
-//									}
-////									recency1 = ((double)(evidenceDate.getTime()-beginningDateOfProject.getTime())/(long)(assignmentDate.getTime()-beginningDateOfProject.getTime()));
-////									recency2 = 1.2 - java.lang.Math.log10(99+(assignmentDate.getTime()-evidenceDate.getTime())/1000)/10;
-//////								subScore = subScore + e.tf; //*recency*context or *recency*e.type...
-////									subScore = subScore + e.freq*recency1; //*recency*context or *recency*e.type...
-////									subScore = subScore + e.tf*recency1*Constants.TYPE_SIMILARITY[et]; //*recency*context or *recency*e.type...
-//									subScore = subScore + e.tf*recency3*Constants.TYPE_SIMILARITY[et]; //*recency*context or *recency*e.type...
-////									subScore = subScore + e.tf*recency2; //*recency*context or *recency*e.type...
-//								}
-//								else //: Since the evidence are ordered by date, break if the date is not before the date of assignment:
-//									break;				
-//							} //for (j
-//						}
-//					}
-////					score = score + termWeight * subScore * wAC.counts[i];
-//					if (wAC.size == 1)
-//						score = score + termWeight * subScore;
-//					else
-//						score = score + termWeight * subScore * (1+Math.log10(wAC.counts[i]));
-////					System.out.println(1+Math.log(wAC.counts[i]));
-//
-//					//testing if the termWeight is wrong:
-////						score = score + subScore/termWeight;
-//				}
-//			}//for (i
-//		}
-//		if (errors1>0)
-//			System.out.println(errors1 + " ERRORS1 in seqNum1: The sequence number of the assignment evidence is greater than the sequence number of the bug!");
-//		if (errors2>0)
-//			System.out.println(errors2 + " ERRORS2 in seqNum2: The sequence number of the non-assignment evidence is greater than the sequence number of the bug!");
-//		if (errors3_possibly>0)
-//			System.out.println(errors3_possibly + " Possible ERRORS3 in seqNum2: The sequence number of the non-assignment evidence is equal to the sequence number of the bug!");
-//		if (errors4_bothAreOne>0)
-//			System.out.println(errors4_bothAreOne + " Possible ERRORS4 in seqNum2: The sequence number of the non-assignment evidence is equal to the sequence number of the bug and both are equal to 1!");
-//		if (errors1>0 || errors2>0 || errors3_possibly>0 || errors4_bothAreOne>0)
-//			System.out.println("ERROR");
-//
-////		for (int i=0; i<10; i++)
-////			if (score > Constants.highScores[i]){
-////				Constants.highScores[i] = score;
-////				break;
-////			}
-//
-//		if (previousAssigneesInThisProject.contains(login))
-//			score = score + 10000;
-//		return score;
-//////////////////////////////////////////////////// END OF WORKING VERSION. ///////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		Double score = 0.0;
 		Double subScore = 0.0;
-		Double termWeight;
-		int errors1 = 0;
-		int errors2 = 0;
-		int errors3_possibly = 0;
-		int errors4_bothAreOne = 0;
-		if (logins_Tags_TypesAndTheirEvidence_InAProject.containsKey(login)){ //: means that if this user has an evidence ever!
-//			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-			Date assignmentDate = a.date;
-//			Date beginningDate = dateFormat.parse(beginningDateOfProject);
-			Date evidenceDate;
-			double recency2 = 1;
-			HashMap<String, HashMap<Integer, ArrayList<Evidence>>> tags_TypesAndTheirEvidence_ForADeveloperInAProject = logins_Tags_TypesAndTheirEvidence_InAProject.get(login);
-			for (int i=0; i<wAC.size; i++){//: Iterating over keywords (tags) of bug.
-				if (tags_TypesAndTheirEvidence_ForADeveloperInAProject.containsKey(wAC.words[i])){//: means that if this user has an evidence including this tag.
-					HashMap<Integer, ArrayList<Evidence>> typesAndEvidenceOfThisDeveloperForATag = tags_TypesAndTheirEvidence_ForADeveloperInAProject.get(wAC.words[i]); //: this is assuming that the non-SO-tag keywords are removed from the text of a bug.
-					termWeight = graph.getNodeWeight(wAC.words[i]);
-					//Considering all different types of evidence (0: Constants.EVIDENCE_TYPE__BUG_TITLE to Constants.EVIDENCE_TYPES__COUNT-1):
-					subScore = 0.0;
-					for (int et_index=0; et_index<evidenceTypesToConsider_count; et_index++){//et: "evidence type"
-						int et = evidenceTypesToConsider[et_index];
-						if (typesAndEvidenceOfThisDeveloperForATag.containsKey(et)){
-							ArrayList<Evidence> type_x_evidenceOfADeveloperForATag = typesAndEvidenceOfThisDeveloperForATag.get(et); //: get specific evidence types (e.g., bug title, bug description, commit message, etc.)
-							int numberOfType_x_evidence = type_x_evidenceOfADeveloperForATag.size();
-							for (int j=0; j<numberOfType_x_evidence; j++){//: Iterating over all evidence (of the current user in the current project) for this tag.
-								Evidence e = type_x_evidenceOfADeveloperForATag.get(j);
-								if (e.date.compareTo(a.date) < 0){ //: Only consider the evidence before the date of assignment "a".  
-									evidenceDate = e.date;
-									if (et < Constants.NUMBER_OF_ASSIGNEE_TYPES){ //(case #1): 0 to 4, which are the assignment types.
-										if (e.bASeqNum >= seqNum)
-											errors1++;
-										if (e.bASeqNum == Constants.SEQ_NUM____THIS_IS_NOT__B_A_EVIDENCE)
-											System.out.println("ERROR!");
-										if (option8_recency == BTOption8_recency.RECENCY2) //note: here, we just calculate recency2. recency1 is the same for case #1 and case #2 (will be calculated directly in the subScore formula later).
-											recency2 = 1.0/(seqNum - e.bASeqNum); //case #1: This is the recency for bug assignment evidence.
-									}
-									else{//(case #2): 11 (Constants.EVIDENCE_TYPE_COMMIT) to 15 (EVIDENCE_TYPE_PR_COMMENT).
-										if (e.nonBA_virtualSeqNum[assignmentTypeToTriage] > seqNum)
-											errors2++;
-										if (e.nonBA_virtualSeqNum[assignmentTypeToTriage] == seqNum){
-											errors3_possibly++;
-											System.out.println("seqNum: " + seqNum);
-											if (e.nonBA_virtualSeqNum[assignmentTypeToTriage] == 1)
-												errors4_bothAreOne++;
+		if (justCalculateOriginalTFIDF){
+			int error_A = 0;
+			if (logins_Tags_TypesAndTheirEvidence_InAProject.containsKey(login)){
+				HashMap<String, HashMap<Integer, ArrayList<Evidence>>> tags_TypesAndTheirEvidence_ForADeveloperInAProject = logins_Tags_TypesAndTheirEvidence_InAProject.get(login);
+				for (int i=0; i<wAC.size; i++){//: Iterating over keywords (tags) of bug.
+					if (tags_TypesAndTheirEvidence_ForADeveloperInAProject.containsKey(wAC.words[i])){//: means that if this user has an evidence including this tag.
+						HashMap<Integer, ArrayList<Evidence>> typesAndEvidenceOfThisDeveloperForATag = tags_TypesAndTheirEvidence_ForADeveloperInAProject.get(wAC.words[i]); //: this is assuming that the non-SO-tag keywords are removed from the text of a bug.
+						for (int et_index=0; et_index<evidenceTypesToConsider_count; et_index++){//et: "evidence type"
+							int et = evidenceTypesToConsider[et_index];
+							if (typesAndEvidenceOfThisDeveloperForATag.containsKey(et)){
+								ArrayList<Evidence> type_x_evidenceOfADeveloperForATag = typesAndEvidenceOfThisDeveloperForATag.get(et); //: get specific evidence types (e.g., bug title, bug description, commit message, etc.)
+								int numberOfType_x_evidence = type_x_evidenceOfADeveloperForATag.size();
+								for (int j=0; j<numberOfType_x_evidence; j++){//: Iterating over all evidence (of the current user in the current project) for this tag.
+									Evidence e = type_x_evidenceOfADeveloperForATag.get(j);
+									if (e.date.compareTo(a.date) < 0){ //: Only consider the evidence before the date of assignment "a".  
+										if (wordsAndTheDevelopersUsedThemUpToNow.containsKey(wAC.words[i])){
+											int numberOfDevelopersUsedTheTerm = wordsAndTheDevelopersUsedThemUpToNow.get(wAC.words[i]).size();
+											subScore = subScore + wAC.counts[i] * e.tf * Math.log(numberOfCommunityMembers / numberOfDevelopersUsedTheTerm); //subScore = subScore + tf(term, bug) * idf(term, allDevs)
 										}
-//											System.out.println("ERROR! The sequence number of the bug is smaller than the sequence number of the evidence!");
-										if (e.nonBA_virtualSeqNum[assignmentTypeToTriage] == Constants.SEQ_NUM____NO_NEED_TO_TRIAGE_THIS_TYPE___OR___THIS_IS_NOT__NON_B_A_EVIDENCE)
-											System.out.println("ERROR!");
-										if (option8_recency == BTOption8_recency.RECENCY2) //note: here, we just calculate recency2. recency1 is the same for case #1 and case #2 (will be calculated directly in the subScore formula later).
-											recency2 = 1.0/(seqNum - e.nonBA_virtualSeqNum[assignmentTypeToTriage]); //case #2: This is the recency for other types of evidence.
+										else{
+											error_A++;
+											break;
+										}
 									}
-									
-									//option3_TF is included in the Evidence indexing (addToIndex() and indexAssignmentEvidence() and readAndIndexNonAssignmentEvidence()). Here, we just read the value:
-									switch (option8_recency){
+								}
+							}
+						}
+					}
+				}			
+			}
+
+			if (error_A > 0)
+				System.out.println(error_A + " ERRORS-A in calculateScoreOfDeveloperForBugAssignment(): the word entry is missing for calculating idf!");
+			score = subScore;
+			if (option5_prioritizePAs == BTOption5_prioritizePAs.PRIORITY_FOR_PREVIOUS_ASSIGNEES)//: Prioritize previous assignees
+				if (previousAssigneesInThisProject.contains(login))
+					score = score + 10000;
+		}
+		else{
+			Double termWeight;
+			int errors1 = 0;
+			int errors2 = 0;
+			int errors3_possibly = 0;
+			int errors4_bothAreOne = 0;
+			if (logins_Tags_TypesAndTheirEvidence_InAProject.containsKey(login)){ //: means that if this user has an evidence ever!
+				//			DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+				Date assignmentDate = a.date;
+				//			Date beginningDate = dateFormat.parse(beginningDateOfProject);
+				Date evidenceDate;
+				double recency2 = 1;
+				HashMap<String, HashMap<Integer, ArrayList<Evidence>>> tags_TypesAndTheirEvidence_ForADeveloperInAProject = logins_Tags_TypesAndTheirEvidence_InAProject.get(login);
+				for (int i=0; i<wAC.size; i++){//: Iterating over keywords (tags) of bug.
+					if (tags_TypesAndTheirEvidence_ForADeveloperInAProject.containsKey(wAC.words[i])){//: means that if this user has an evidence including this tag.
+						HashMap<Integer, ArrayList<Evidence>> typesAndEvidenceOfThisDeveloperForATag = tags_TypesAndTheirEvidence_ForADeveloperInAProject.get(wAC.words[i]); //: this is assuming that the non-SO-tag keywords are removed from the text of a bug.
+						termWeight = graph.getNodeWeight(wAC.words[i]);
+						//Considering all different types of evidence (0: Constants.EVIDENCE_TYPE__BUG_TITLE to Constants.EVIDENCE_TYPES__COUNT-1):
+						subScore = 0.0;
+						for (int et_index=0; et_index<evidenceTypesToConsider_count; et_index++){//et: "evidence type"
+							int et = evidenceTypesToConsider[et_index];
+							if (typesAndEvidenceOfThisDeveloperForATag.containsKey(et)){
+								ArrayList<Evidence> type_x_evidenceOfADeveloperForATag = typesAndEvidenceOfThisDeveloperForATag.get(et); //: get specific evidence types (e.g., bug title, bug description, commit message, etc.)
+								int numberOfType_x_evidence = type_x_evidenceOfADeveloperForATag.size();
+								for (int j=0; j<numberOfType_x_evidence; j++){//: Iterating over all evidence (of the current user in the current project) for this tag.
+									Evidence e = type_x_evidenceOfADeveloperForATag.get(j);
+									if (e.date.compareTo(a.date) < 0){ //: Only consider the evidence before the date of assignment "a".  
+										evidenceDate = e.date;
+										if (et < Constants.NUMBER_OF_ASSIGNEE_TYPES){ //(case #1): 0 to 4, which are the assignment types.
+											if (e.bASeqNum >= seqNum)
+												errors1++;
+											if (e.bASeqNum == Constants.SEQ_NUM____THIS_IS_NOT__B_A_EVIDENCE)
+												System.out.println("ERROR!");
+											if (option8_recency == BTOption8_recency.RECENCY2) //note: here, we just calculate recency2. recency1 is the same for case #1 and case #2 (will be calculated directly in the subScore formula later).
+												recency2 = 1.0/(seqNum - e.bASeqNum); //case #1: This is the recency for bug assignment evidence.
+										}
+										else{//(case #2): 11 (Constants.EVIDENCE_TYPE_COMMIT) to 15 (EVIDENCE_TYPE_PR_COMMENT).
+											if (e.nonBA_virtualSeqNum[assignmentTypeToTriage] > seqNum)
+												errors2++;
+											if (e.nonBA_virtualSeqNum[assignmentTypeToTriage] == seqNum){
+												errors3_possibly++;
+												System.out.println("seqNum: " + seqNum);
+												if (e.nonBA_virtualSeqNum[assignmentTypeToTriage] == 1)
+													errors4_bothAreOne++;
+											}
+											//											System.out.println("ERROR! The sequence number of the bug is smaller than the sequence number of the evidence!");
+											if (e.nonBA_virtualSeqNum[assignmentTypeToTriage] == Constants.SEQ_NUM____NO_NEED_TO_TRIAGE_THIS_TYPE___OR___THIS_IS_NOT__NON_B_A_EVIDENCE)
+												System.out.println("ERROR!");
+											if (option8_recency == BTOption8_recency.RECENCY2) //note: here, we just calculate recency2. recency1 is the same for case #1 and case #2 (will be calculated directly in the subScore formula later).
+												recency2 = 1.0/(seqNum - e.nonBA_virtualSeqNum[assignmentTypeToTriage]); //case #2: This is the recency for other types of evidence.
+										}
+
+										//option3_TF is included in the Evidence indexing (addToIndex() and indexAssignmentEvidence() and readAndIndexNonAssignmentEvidence()). Here, we just read the value:
+										switch (option8_recency){
 										case NO_RECENCY:
 											subScore = subScore + e.tf;
 											break;
@@ -322,91 +263,92 @@ public class AlgPrep {
 										case RECENCY2: //subScore = subScore + e.tf * recency2:
 											subScore = subScore + e.tf*recency2; //: This is the recency that is calculated based on one of the two cases above (case #1 and case #2).
 											break;
+										}
+										//									subScore = subScore + e.tf; //*recency*context or *recency*e.type...
+										//									subScore = subScore + e.freq*recency1; //*recency*context or *recency*e.type...
+										//									subScore = subScore + e.tf*recency1*Constants.TYPE_SIMILARITY[et]; //*recency*context or *recency*e.type...
+										//									subScore = subScore + e.tf*recency3*Constants.TYPE_SIMILARITY[et]; //*recency*context or *recency*e.type...
+										//									subScore = subScore + e.tf*recency2; //*recency*context or *recency*e.type...
+
+										//									recency1 = ((double)(evidenceDate.getTime()-beginningDateOfProject.getTime())/(long)(assignmentDate.getTime()-beginningDateOfProject.getTime()));
+										//									recency2 = 1.2 - java.lang.Math.log10(99+(assignmentDate.getTime()-evidenceDate.getTime())/1000)/10;
 									}
-//									subScore = subScore + e.tf; //*recency*context or *recency*e.type...
-//									subScore = subScore + e.freq*recency1; //*recency*context or *recency*e.type...
-//									subScore = subScore + e.tf*recency1*Constants.TYPE_SIMILARITY[et]; //*recency*context or *recency*e.type...
-//									subScore = subScore + e.tf*recency3*Constants.TYPE_SIMILARITY[et]; //*recency*context or *recency*e.type...
-//									subScore = subScore + e.tf*recency2; //*recency*context or *recency*e.type...
-								
-//									recency1 = ((double)(evidenceDate.getTime()-beginningDateOfProject.getTime())/(long)(assignmentDate.getTime()-beginningDateOfProject.getTime()));
-//									recency2 = 1.2 - java.lang.Math.log10(99+(assignmentDate.getTime()-evidenceDate.getTime())/1000)/10;
-								}
-								else //: Since the evidence are ordered by date, break if the date is not before the date of assignment:
-									break;				
-							} //for (j
+									else //: Since the evidence are ordered by date, break if the date is not before the date of assignment:
+										break;				
+								} //for (j
+							}
 						}
-					}
-					switch (option2_w){//: Term weighting
-					case NO_TERM_WEIGHTING:
-						switch (option4_IDF){//: IDF formula
-						case ONE:
-							score = score + subScore;
-							break;
-						case FREQ:
-							score = score + subScore * wAC.counts[i];
-							break;
-						case FREQ__TOTAL_NUMBER_OF_TERMS:
-							score = score + subScore * wAC.counts[i]/wAC.totalNumberOfWords;
-							break;
-						case LOG_BASED:
-							score = score + subScore * (1+Math.log10(wAC.counts[i]));
-							break;
+						switch (option2_w){//: Term weighting
+						case NO_TERM_WEIGHTING:
+							switch (option4_IDF){//: IDF formula
+							case ONE:
+								score = score + subScore;
+								break;
+							case FREQ:
+								score = score + subScore * wAC.counts[i];
+								break;
+							case FREQ__TOTAL_NUMBER_OF_TERMS:
+								score = score + subScore * wAC.counts[i]/wAC.totalNumberOfWords;
+								break;
+							case LOG_BASED:
+								score = score + subScore * (1+Math.log10(wAC.counts[i]));
+								break;
+							}
+						case USE_TERM_WEIGHTING:
+							switch (option4_IDF){//: IDF formula
+							case ONE:
+								score = score + subScore * termWeight;
+								break;
+							case FREQ:
+								score = score + subScore * termWeight * wAC.counts[i];
+								break;
+							case FREQ__TOTAL_NUMBER_OF_TERMS:
+								score = score + subScore * termWeight * wAC.counts[i]/wAC.totalNumberOfWords;
+								break;
+							case LOG_BASED:
+								score = score + subScore * termWeight * (1+Math.log10(wAC.counts[i]));
+								break;
+							}
 						}
-					case USE_TERM_WEIGHTING:
-						switch (option4_IDF){//: IDF formula
-						case ONE:
-							score = score + subScore * termWeight;
-							break;
-						case FREQ:
-							score = score + subScore * termWeight * wAC.counts[i];
-							break;
-						case FREQ__TOTAL_NUMBER_OF_TERMS:
-							score = score + subScore * termWeight * wAC.counts[i]/wAC.totalNumberOfWords;
-							break;
-						case LOG_BASED:
-							score = score + subScore * termWeight * (1+Math.log10(wAC.counts[i]));
-							break;
-						}
-					}
-//					score = score + termWeight * subScore * wAC.counts[i]/wAC.totalNumberOfWords; //
-//					score = score + subScore * wAC.counts[i];
-					
-//					score = score + subScore;
-//					score = score + subScore;
-//					if (wAC.counts[i] == 1)
-//						score = score + termWeight * subScore;
-//					else
-//						score = score + termWeight * subScore * (1+Math.log10(wAC.counts[i]));
-					
-//					System.out.println(1+Math.log(wAC.counts[i]));
+						//					score = score + termWeight * subScore * wAC.counts[i]/wAC.totalNumberOfWords; //
+						//					score = score + subScore * wAC.counts[i];
 
-					//testing if the termWeight is wrong:
-//						score = score + subScore/termWeight;
-				}
-			}//for (i
-		}
-		if (errors1>0)
-			System.out.println(errors1 + " ERRORS1 in seqNum1: The sequence number of the assignment evidence is greater than the sequence number of the bug!");
-		if (errors2>0)
-			System.out.println(errors2 + " ERRORS2 in seqNum2: The sequence number of the non-assignment evidence is greater than the sequence number of the bug!");
-		if (errors3_possibly>0)
-			System.out.println(errors3_possibly + " Possible ERRORS3 in seqNum2: The sequence number of the non-assignment evidence is equal to the sequence number of the bug!");
-		if (errors4_bothAreOne>0)
-			System.out.println(errors4_bothAreOne + " Possible ERRORS4 in seqNum2: The sequence number of the non-assignment evidence is equal to the sequence number of the bug and both are equal to 1!");
-		if (errors1>0 || errors2>0 || errors3_possibly>0 || errors4_bothAreOne>0)
-			System.out.println("ERROR");
+						//					score = score + subScore;
+						//					score = score + subScore;
+						//					if (wAC.counts[i] == 1)
+						//						score = score + termWeight * subScore;
+						//					else
+						//						score = score + termWeight * subScore * (1+Math.log10(wAC.counts[i]));
 
-//		for (int i=0; i<10; i++)
-//			if (score > Constants.highScores[i]){
-//				Constants.highScores[i] = score;
-//				break;
-//			}
-		
-		if (option5_prioritizePAs == BTOption5_prioritizePAs.PRIORITY_FOR_PREVIOUS_ASSIGNEES){//: Prioritize previous assignees
-			if (previousAssigneesInThisProject.contains(login))
-				score = score + 10000;
-		}
+						//					System.out.println(1+Math.log(wAC.counts[i]));
+
+						//testing if the termWeight is wrong:
+						//						score = score + subScore/termWeight;
+					}
+				}//for (i
+			}
+			if (errors1>0)
+				System.out.println(errors1 + " ERRORS1 in seqNum1: The sequence number of the assignment evidence is greater than the sequence number of the bug!");
+			if (errors2>0)
+				System.out.println(errors2 + " ERRORS2 in seqNum2: The sequence number of the non-assignment evidence is greater than the sequence number of the bug!");
+			if (errors3_possibly>0)
+				System.out.println(errors3_possibly + " Possible ERRORS3 in seqNum2: The sequence number of the non-assignment evidence is equal to the sequence number of the bug!");
+			if (errors4_bothAreOne>0)
+				System.out.println(errors4_bothAreOne + " Possible ERRORS4 in seqNum2: The sequence number of the non-assignment evidence is equal to the sequence number of the bug and both are equal to 1!");
+			if (errors1>0 || errors2>0 || errors3_possibly>0 || errors4_bothAreOne>0)
+				System.out.println("ERROR");
+
+			//		for (int i=0; i<10; i++)
+			//			if (score > Constants.highScores[i]){
+			//				Constants.highScores[i] = score;
+			//				break;
+			//			}
+
+			if (option5_prioritizePAs == BTOption5_prioritizePAs.PRIORITY_FOR_PREVIOUS_ASSIGNEES){//: Prioritize previous assignees
+				if (previousAssigneesInThisProject.contains(login))
+					score = score + 10000;
+			}
+		} //else of if (justCalculateOriginalTFIDF).
 		return score;
 	}
 	//------------------------------------------------------------------------------------------------------------------------
@@ -728,10 +670,11 @@ public class AlgPrep {
 			int originalNumberOfWordsInTheText, Graph graph, String projectId, String login, String date, 
 			HashMap<String, HashMap<String, HashMap<String, HashMap<Integer, ArrayList<Evidence>>>>> projectId_Login_Tags_TypesAndTheirEvidence, 
 			BTOption3_TF option3_TF, BTOption7_whenToCountTextLength option7_whenToCountTextLength,  
+			boolean justCalculateOriginalTFIDF, 
 			FileManipulationResult fMR){
 		String[] words = evidenceText.split(" ");
 		for (int j=0; j<words.length; j++){
-			if (!words[j].equals("") && graph.hasNode(words[j])){ //: means that if this word is an SO tag.
+			if (!words[j].equals("") && (justCalculateOriginalTFIDF || graph.hasNode(words[j]))){ //: means that if this word is an SO tag.
 				//First, start by projectId:
 				HashMap<String, HashMap<String, HashMap<Integer, ArrayList<Evidence>>>> login_Tags_TypesAndTheirEvidence;
 				if (projectId_Login_Tags_TypesAndTheirEvidence.containsKey(projectId))
@@ -806,6 +749,7 @@ public class AlgPrep {
 			//HashMap<projId, HashMap<login, HashMap<tag, ArrayList<Evidence>>>>
 			Graph graph, FileManipulationResult fMR, 
 			BTOption1_whatToAddToAllBugs option1, BTOption2_w option2_w, BTOption3_TF option3_TF, BTOption4_IDF option4_IDF, BTOption5_prioritizePAs option5_prioritizePAs, BTOption6_whatToAddToAllCommits option6_whatToAddToAllCommits, BTOption7_whenToCountTextLength option7_whenToCountTextLength, 
+			boolean justCalculateOriginalTFIDF, 
 			boolean wrapOutputInLines, int showProgressInterval, int indentationLevel, String writeMessageStep){
 		//This method reads the input files that are not empty ("") in parameter projectId_Login_TagsAndTheirEvidence. 
 			//The arrayList should be sorted based on date. 
@@ -841,7 +785,7 @@ public class AlgPrep {
 						int[] virtualSeqNum = new int[Constants.NUMBER_OF_ASSIGNEE_TYPES];
 						for (int j=0; j<Constants.NUMBER_OF_ASSIGNEE_TYPES; j++)
 							virtualSeqNum[j] = Constants.SEQ_NUM____NO_NEED_TO_TRIAGE_THIS_TYPE___OR___THIS_IS_NOT__NON_B_A_EVIDENCE;
-						addToIndex(text, evidenceType, i+1, virtualSeqNum, originalNumberOfWordsInText, graph, projectId, login, date, projectId_Login_Tags_TypesAndTheirEvidence, option3_TF, option7_whenToCountTextLength, fMR);
+						addToIndex(text, evidenceType, i+1, virtualSeqNum, originalNumberOfWordsInText, graph, projectId, login, date, projectId_Login_Tags_TypesAndTheirEvidence, option3_TF, option7_whenToCountTextLength, justCalculateOriginalTFIDF, fMR);
 					}
 					else{
 //						fMR.errors++;
@@ -877,6 +821,7 @@ public class AlgPrep {
 			//HashMap<projId, HashMap<login, HashMap<tag, ArrayList<Evidence>>>>
 			Graph graph, 
 			BTOption1_whatToAddToAllBugs option1, BTOption2_w option2_w, BTOption3_TF option3_TF, BTOption4_IDF option4_IDF, BTOption5_prioritizePAs option5_prioritizePAs, BTOption6_whatToAddToAllCommits option6_whatToAddToAllCommits, BTOption7_whenToCountTextLength option7_whenToCountTextLength, 
+			boolean justCalculateOriginalTFIDF, 
 			boolean wrapOutputInLines, int showProgressInterval, int indentationLevel, String writeMessageStep){
 		//This method reads the input files that are not empty ("") in parameter projectId_Login_TagsAndTheirEvidence. 
 			//The arrayList should be sorted based on date. 
@@ -924,7 +869,7 @@ public class AlgPrep {
 										virtualSeqNum[j] = Constants.SEQ_NUM____NO_NEED_TO_TRIAGE_THIS_TYPE___OR___THIS_IS_NOT__NON_B_A_EVIDENCE;
 								}
 								if (text.length() > 2)
-									addToIndex(text, Constants.EVIDENCE_TYPE_COMMIT, Constants.SEQ_NUM____THIS_IS_NOT__B_A_EVIDENCE, virtualSeqNum, originalNumberOfWordsInText, graph, projectId, committer, date, projectId_Login_Tags_TypesAndTheirEvidence, option3_TF, option7_whenToCountTextLength, fMR);
+									addToIndex(text, Constants.EVIDENCE_TYPE_COMMIT, Constants.SEQ_NUM____THIS_IS_NOT__B_A_EVIDENCE, virtualSeqNum, originalNumberOfWordsInText, graph, projectId, committer, date, projectId_Login_Tags_TypesAndTheirEvidence, option3_TF, option7_whenToCountTextLength, justCalculateOriginalTFIDF, fMR);
 								else{
 //									fMR.errors++;
 //									System.out.println("Error! Non-assignment evidence length is zero!");
