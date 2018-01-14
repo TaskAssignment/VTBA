@@ -1,4 +1,4 @@
-# BugTriaging2
+# TTBA: Thesaurus and Time based Bug-assignment 
 This project includes the experiments for bug assignment (using Github data sets).
 
 The bug assignment is based on expertise scores of the developers. The scores are obtained by calculating the similarity between the new bug and each developer. Our similarity metric is based on IR method, TF-IDF, and takes into account time and importance of the used keywords. 
