@@ -49,7 +49,7 @@ public class Algorithm {//test 9
 			boolean isMainRun, int[] assignmentTypesToTriage, int[] evidenceTypes, int totalEvidenceTypes_count,  
 			String experimentTitle, String experimentDetails, 
 			BTOption1_whatToAddToAllBugs option1_whatToAddToAllBugs, BTOption2_w option2_w, BTOption3_TF option3_TF, BTOption4_IDF option4_IDF, BTOption5_prioritizePAs option5_prioritizePAs, BTOption6_whatToAddToAllCommits option6_whatToAddToAllCommits,  BTOption7_whenToCountTextLength option7_whenToCountTextLength, BTOption8_recency option8_recency,
-			boolean justCalculateOriginalTFIDF, 
+			boolean justCalculateOriginalTFIDF, int developerFilterationThreshold_leastNumberOfBugsToFixToBeConsidered, 
 			FileManipulationResult fMR,
 			boolean wrapOutputInLines, int showProgressInterval, int indentationLevel, long testOrReal, String writeMessageStep) {
 		MyUtils.println("-----------------------------------", indentationLevel);
@@ -263,6 +263,10 @@ public class Algorithm {//test 9
 								
 								int numberOfBugsProcessed = 0;
 								HashSet<String> previousAssigneesInThisProject = new HashSet<>();
+								AlgPrep.removeAssignmentsOfDevelopersWhoFixedAtLeastNBugs(assignmentsOfThisProject, 
+										developerFilterationThreshold_leastNumberOfBugsToFixToBeConsidered, logins_Tags_TypesAndTheirEvidence, 
+										indentationLevel+5, localFMR);
+								totalFMR = MyUtils.addFileManipulationResults(totalFMR, localFMR);
 								for (int j=0; j<assignmentsOfThisProject.size(); j++){ 
 									Assignment a = new Assignment(assignmentsOfThisProject, j, indentationLevel+5);
 									HashMap<String, Double> scores = new HashMap<String, Double>(); 
@@ -451,8 +455,11 @@ public class Algorithm {//test 9
 		boolean isMainRun = true; //: means that we are running the code for all projects.
 //		boolean isMainRun = false; //: means that we are running the code for only three test projects ("adobe/brackets", "fog/fog" and "lift/framework").
 		
-//		boolean justCalculateOriginalTFIDF = true; //Un-comment this line and comment the next line if you want to run the TF-IDF experiment (which is only a small part of code) to compare against the results of the rest of this program (which is most of this code).
-		boolean justCalculateOriginalTFIDF = false;
+		boolean justCalculateOriginalTFIDF = true; //Un-comment this line and comment the next line if you want to run the TF-IDF experiment (which is only a small part of code) to compare against the results of the rest of this program (which is most of this code).
+//		boolean justCalculateOriginalTFIDF = false;
+		
+		//Threshold for considering assignments of developers who fixed at least N bugs: Default: All bugs should be considered (no filteration); N=1
+		int developerFilterationThreshold_leastNumberOfBugsToFixToBeConsidered = 1;
 		
 //for (int num=0; num<2; num++)
 		for (BTOption1_whatToAddToAllBugs option1_whatToAddToAllBugs: BTOption1_whatToAddToAllBugs.values()){//: What to be added to the bugs by default.
@@ -614,7 +621,7 @@ public class Algorithm {//test 9
 												isMainRun, assignmentTypesToTriage, evidenceTypes, totalEvidenceTypes_count, 
 												experimentTitle, "-",
 												option1_whatToAddToAllBugs, option2_w, option3_TF, option4_IDF, option5_prioritizePAs, option6_whatToAddToAllCommits, option7_whenToCountTextLength, option8_recency,
-												justCalculateOriginalTFIDF, 
+												justCalculateOriginalTFIDF, developerFilterationThreshold_leastNumberOfBugsToFixToBeConsidered, 
 												fMR,
 												false, 5000, 0, Constants.THIS_IS_REAL, "");		
 										if (fMR.errors > 0){
