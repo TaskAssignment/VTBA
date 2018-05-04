@@ -37,6 +37,7 @@ import utils.Constants.BTOption5_prioritizePAs;
 import utils.Constants.BTOption6_whatToAddToAllCommits;
 import utils.Constants.BTOption7_whenToCountTextLength;
 import utils.Constants.BTOption8_recency;
+import utils.Constants.GeneralExperimentType;
 import utils.Constants.ProjectType;
 import utils.FileManipulationResult;
 import utils.Graph;
@@ -154,7 +155,7 @@ public class AlgPrep {
 			WordsAndCounts wAC, int originalNumberOfWordsInBugText, 
 			int seqNum, //seqNum is the sequence number of the bug. It is used for determining the recency based on FASE paper formula (number of bugs between a bugAssignmentEvidence and the current bug). 
 			Date beginningDateOfProject, 
-			boolean justCalculateOriginalTFIDF, int numberOfCommunityMembers, HashMap<String, HashSet<String>> wordsAndTheDevelopersUsedThemUpToNow, 
+			GeneralExperimentType generalExperimentType, int numberOfCommunityMembers, HashMap<String, HashMap<String, Date>> wordsAnd_theDevelopersUsedThemUpToNow_lastUsageDate, //"java"--> <"bob", 1/1/1> 
 			BTOption2_w option2_w, BTOption4_IDF option4_IDF, BTOption5_prioritizePAs option5_prioritizePAs, BTOption8_recency option8_recency, 
 			int indentationLevel){
 		//This method calculates the score of developer "login" for assignment "a". 
@@ -162,7 +163,12 @@ public class AlgPrep {
 		//			Later, it also considers the evidence in other projects (the project family experiment) using projectsAndTheirAssignments.
 		Double score = 0.0;
 		Double subScore = 0.0;
-		if (justCalculateOriginalTFIDF){
+		if (generalExperimentType == GeneralExperimentType.JUST_CALCULATE_ORIGINAL_TF_IDF || generalExperimentType == GeneralExperimentType.JUST_CALCULATE_TIME_TF_IDF){
+			
+//			HashMap<String, HashMap<String, Date>> hh = new HashMap<String, HashMap<String, Date>>();
+//			hh.get("a").size()
+			
+					
 			int error_A = 0;
 			if (logins_Tags_TypesAndTheirEvidence_InAProject.containsKey(login)){
 				HashMap<String, HashMap<Integer, ArrayList<Evidence>>> tags_TypesAndTheirEvidence_ForADeveloperInAProject = logins_Tags_TypesAndTheirEvidence_InAProject.get(login);
@@ -177,9 +183,25 @@ public class AlgPrep {
 								for (int j=0; j<numberOfType_x_evidence; j++){//: Iterating over all evidence (of the current user in the current project) for this tag.
 									Evidence e = type_x_evidenceOfADeveloperForATag.get(j);
 									if (e.date.compareTo(a.date) < 0){ //: Only consider the evidence before the date of assignment "a".  
-										if (wordsAndTheDevelopersUsedThemUpToNow.containsKey(wAC.words[i])){
-											int numberOfDevelopersUsedTheTerm = wordsAndTheDevelopersUsedThemUpToNow.get(wAC.words[i]).size();
-											subScore = subScore + wAC.counts[i] * e.tf * Math.log(numberOfCommunityMembers / numberOfDevelopersUsedTheTerm); //subScore = subScore + tf(term, bug) * idf(term, allDevs)
+										if (wordsAnd_theDevelopersUsedThemUpToNow_lastUsageDate.containsKey(wAC.words[i])){
+											int numberOfDevelopersUsedTheTerm = wordsAnd_theDevelopersUsedThemUpToNow_lastUsageDate.get(wAC.words[i]).size();
+											HashMap<String, Date> developers_lastUsageDate = wordsAnd_theDevelopersUsedThemUpToNow_lastUsageDate.get(wAC.words[i]);
+											if (developers_lastUsageDate.containsKey(login)){					
+												if (generalExperimentType == GeneralExperimentType.JUST_CALCULATE_ORIGINAL_TF_IDF){
+													subScore = subScore + wAC.counts[i] * e.tf * Math.log(numberOfCommunityMembers / numberOfDevelopersUsedTheTerm); //subScore = subScore + tf(term, bug) * idf(term, allDevs)
+												}
+												else{//means that generalExperimentType == GeneralExperimentType.JUST_CALCULATE_TIME_TF_IDF:
+													int dayDiff = MyUtils.getDifferenceInDays(a.date, developers_lastUsageDate.get(login)); //dayDiff: time difference between "date of usage of the term by the developer" and "date of the new bug". 
+													if (dayDiff == 0) //If the two dates above are the same, dayDiff becomes 0. So, we will consider it as 1, since it is going to the denominator, in the recency formula of Time-TF-IDF
+														dayDiff = 1;
+													Double recency_for_Time_TF_IDF = 1.0/numberOfDevelopersUsedTheTerm + 1.0/(Math.sqrt(dayDiff));
+													subScore = subScore + recency_for_Time_TF_IDF * wAC.counts[i] * e.tf * Math.log(numberOfCommunityMembers / numberOfDevelopersUsedTheTerm); //subScore = subScore + tf(term, bug) * idf(term, allDevs)
+												}
+											}
+											else{
+												error_A++;
+												break;
+											}
 										}
 										else{
 											error_A++;
@@ -667,14 +689,16 @@ public class AlgPrep {
 	//------------------------------------------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------------------------------------------------
 	public static void addToIndex(String evidenceText, int evidenceType, int seqNum, int[] virtualSeqNum, //seqNum is the sequence number of the evidence. If it is an assignment, the row number in the assignments file (first assignment in the project is 1 and the next one increment by one). If it is not an assignment (e.g., it is a commit), the seqNum of the last assignment before that evidence will be considered.
-			int originalNumberOfWordsInTheText, Graph graph, String projectId, String login, String date, 
+			int originalNumberOfWordsInTheText, 
+			Graph graph, String projectId, String login, String date, 
 			HashMap<String, HashMap<String, HashMap<String, HashMap<Integer, ArrayList<Evidence>>>>> projectId_Login_Tags_TypesAndTheirEvidence, 
 			BTOption3_TF option3_TF, BTOption7_whenToCountTextLength option7_whenToCountTextLength,  
-			boolean justCalculateOriginalTFIDF, 
+			GeneralExperimentType generalExperimentType, 
 			FileManipulationResult fMR){
 		String[] words = evidenceText.split(" ");
 		for (int j=0; j<words.length; j++){
-			if (!words[j].equals("") && (justCalculateOriginalTFIDF || graph.hasNode(words[j]))){ //: means that if this word is an SO tag.
+			if (!words[j].equals("") 
+					&& (generalExperimentType == GeneralExperimentType.JUST_CALCULATE_ORIGINAL_TF_IDF  || generalExperimentType == GeneralExperimentType.JUST_CALCULATE_TIME_TF_IDF || graph.hasNode(words[j]))){ //: means that if this word is an SO tag.
 				//First, start by projectId:
 				HashMap<String, HashMap<String, HashMap<Integer, ArrayList<Evidence>>>> login_Tags_TypesAndTheirEvidence;
 				if (projectId_Login_Tags_TypesAndTheirEvidence.containsKey(projectId))
@@ -749,7 +773,7 @@ public class AlgPrep {
 			//HashMap<projId, HashMap<login, HashMap<tag, ArrayList<Evidence>>>>
 			Graph graph, FileManipulationResult fMR, 
 			BTOption1_whatToAddToAllBugs option1, BTOption2_w option2_w, BTOption3_TF option3_TF, BTOption4_IDF option4_IDF, BTOption5_prioritizePAs option5_prioritizePAs, BTOption6_whatToAddToAllCommits option6_whatToAddToAllCommits, BTOption7_whenToCountTextLength option7_whenToCountTextLength, 
-			boolean justCalculateOriginalTFIDF, 
+			GeneralExperimentType generalExperimentType, 
 			boolean wrapOutputInLines, int showProgressInterval, int indentationLevel, String writeMessageStep){
 		//This method reads the input files that are not empty ("") in parameter projectId_Login_TagsAndTheirEvidence. 
 			//The arrayList should be sorted based on date. 
@@ -785,7 +809,8 @@ public class AlgPrep {
 						int[] virtualSeqNum = new int[Constants.NUMBER_OF_ASSIGNEE_TYPES];
 						for (int j=0; j<Constants.NUMBER_OF_ASSIGNEE_TYPES; j++)
 							virtualSeqNum[j] = Constants.SEQ_NUM____NO_NEED_TO_TRIAGE_THIS_TYPE___OR___THIS_IS_NOT__NON_B_A_EVIDENCE;
-						addToIndex(text, evidenceType, i+1, virtualSeqNum, originalNumberOfWordsInText, graph, projectId, login, date, projectId_Login_Tags_TypesAndTheirEvidence, option3_TF, option7_whenToCountTextLength, justCalculateOriginalTFIDF, fMR);
+						addToIndex(text, evidenceType, i+1, virtualSeqNum, originalNumberOfWordsInText, 
+								graph, projectId, login, date, projectId_Login_Tags_TypesAndTheirEvidence, option3_TF, option7_whenToCountTextLength, generalExperimentType, fMR);
 					}
 					else{
 //						fMR.errors++;
@@ -821,7 +846,7 @@ public class AlgPrep {
 			//HashMap<projId, HashMap<login, HashMap<tag, ArrayList<Evidence>>>>
 			Graph graph, 
 			BTOption1_whatToAddToAllBugs option1, BTOption2_w option2_w, BTOption3_TF option3_TF, BTOption4_IDF option4_IDF, BTOption5_prioritizePAs option5_prioritizePAs, BTOption6_whatToAddToAllCommits option6_whatToAddToAllCommits, BTOption7_whenToCountTextLength option7_whenToCountTextLength, 
-			boolean justCalculateOriginalTFIDF, 
+			GeneralExperimentType generalExperimentType, 
 			boolean wrapOutputInLines, int showProgressInterval, int indentationLevel, String writeMessageStep){
 		//This method reads the input files that are not empty ("") in parameter projectId_Login_TagsAndTheirEvidence. 
 			//The arrayList should be sorted based on date. 
@@ -869,7 +894,8 @@ public class AlgPrep {
 										virtualSeqNum[j] = Constants.SEQ_NUM____NO_NEED_TO_TRIAGE_THIS_TYPE___OR___THIS_IS_NOT__NON_B_A_EVIDENCE;
 								}
 								if (text.length() > 2)
-									addToIndex(text, Constants.EVIDENCE_TYPE_COMMIT, Constants.SEQ_NUM____THIS_IS_NOT__B_A_EVIDENCE, virtualSeqNum, originalNumberOfWordsInText, graph, projectId, committer, date, projectId_Login_Tags_TypesAndTheirEvidence, option3_TF, option7_whenToCountTextLength, justCalculateOriginalTFIDF, fMR);
+									addToIndex(text, Constants.EVIDENCE_TYPE_COMMIT, Constants.SEQ_NUM____THIS_IS_NOT__B_A_EVIDENCE, virtualSeqNum, originalNumberOfWordsInText, 
+											graph, projectId, committer, date, projectId_Login_Tags_TypesAndTheirEvidence, option3_TF, option7_whenToCountTextLength, generalExperimentType, fMR);
 								else{
 //									fMR.errors++;
 //									System.out.println("Error! Non-assignment evidence length is zero!");

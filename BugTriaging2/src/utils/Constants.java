@@ -28,6 +28,7 @@ package utils;
 //import utils.Constants.LogicalOperation;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -104,7 +105,7 @@ public class Constants {
 	//*******************************************************************************************************************************
 	//*******************************************************************************************************************************
 //	public static final String DATASET_DIRECTORY_FOR_THE_ALGORITHM__SOURCE = "C:\\BT2\\BugTriaging2";
-	public static final String DATASET_DIRECTORY_BASE = "C:\\BT2\BugTriaging2";
+	public static final String DATASET_DIRECTORY_BASE = "C:\\BT2\\BugTriaging2C";
 	public static final String DATASET_DIRECTORY_FOR_THE_ALGORITHM__GH__EXPERIMENT_MAIN = DATASET_DIRECTORY_BASE + "\\Exp\\In\\GH\\DSForMainExp";
 	public static final String DATASET_DIRECTORY_FOR_THE_ALGORITHM__GH__EXPERIMENT_TFIDF = DATASET_DIRECTORY_BASE + "\\Exp\\In\\GH\\DSForTFIDFExp";
 	public static final String DATASET_DIRECTORY_FOR_THE_ALGORITHM__SO__EXPERIMENT = DATASET_DIRECTORY_BASE + "\\Exp\\In\\SO";
@@ -379,6 +380,11 @@ public class Constants {
 		RECENCY2
 	}
 	
+	public enum GeneralExperimentType{
+		CALCULATE_OUR_METRIC__TTBA,
+		JUST_CALCULATE_ORIGINAL_TF_IDF,
+		JUST_CALCULATE_TIME_TF_IDF
+	}
 	public static void f1(FileManipulationResult fMR){
 		FileManipulationResult fMR2 = new FileManipulationResult();
 		fMR2.errors++;
@@ -386,14 +392,32 @@ public class Constants {
 			fMR.errors = fMR2.errors;
 	}
 	
+	public static int getDifferenceInDays(Date d1, Date d2) {
+	    int daysdiff = 0;
+	    long diff = d2.getTime() - d1.getTime();
+	    daysdiff = (int) Math.abs(diff / (24 * 60 * 60 * 1000));
+	    return daysdiff;
+	}
+	
 	public static void main(String[] args) {
-		FileManipulationResult fMR = new FileManipulationResult();
-		f1(fMR);
-		if (fMR.errors > 0)
-			System.out.println("ERROR");
-		else
-			System.out.println("No error");
+		Date d1 = new Date();
+		Date d2 = new Date();
+		try {
+			d1 = dateFormat.parse("2010-09-24T22:01:14.000Z");
+			d2 = dateFormat.parse("2010-09-24T22:01:14.000Z");
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println(getDifferenceInDays(d2, d1));
 		
+//		FileManipulationResult fMR = new FileManipulationResult();
+//		f1(fMR);
+//		if (fMR.errors > 0)
+//			System.out.println("ERROR");
+//		else
+//			System.out.println("No error");
+//		
 //		for (BTOption1_whatToAddToAllBugs option1: BTOption1_whatToAddToAllBugs.values()){//: What to be added to the bugs by default.
 //			for (BTOption2_w option2: BTOption2_w.values()){//: Term weighting
 //				for (BTOption3_TF option3: BTOption3_TF.values()){//: TF formula.

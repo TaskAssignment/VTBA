@@ -30,6 +30,7 @@ import utils.Constants.BTOption7_whenToCountTextLength;
 import utils.Constants.BTOption8_recency;
 import utils.Constants.ConditionType;
 import utils.Constants.FieldType;
+import utils.Constants.GeneralExperimentType;
 import utils.Constants.LogicalOperation;
 import utils.Constants.ProjectType;
 import utils.Constants.SortOrder;
@@ -49,7 +50,7 @@ public class Algorithm {//test 9
 			boolean isMainRun, int[] assignmentTypesToTriage, int[] evidenceTypes, int totalEvidenceTypes_count,  
 			String experimentTitle, String experimentDetails, 
 			BTOption1_whatToAddToAllBugs option1_whatToAddToAllBugs, BTOption2_w option2_w, BTOption3_TF option3_TF, BTOption4_IDF option4_IDF, BTOption5_prioritizePAs option5_prioritizePAs, BTOption6_whatToAddToAllCommits option6_whatToAddToAllCommits,  BTOption7_whenToCountTextLength option7_whenToCountTextLength, BTOption8_recency option8_recency,
-			boolean justCalculateOriginalTFIDF, int developerFilterationThreshold_leastNumberOfBugsToFixToBeConsidered, 
+			GeneralExperimentType generalExperimentType, int developerFilterationThreshold_leastNumberOfBugsToFixToBeConsidered, 
 			FileManipulationResult fMR,
 			boolean wrapOutputInLines, int showProgressInterval, int indentationLevel, long testOrReal, String writeMessageStep) {
 		MyUtils.println("-----------------------------------", indentationLevel);
@@ -71,7 +72,7 @@ public class Algorithm {//test 9
 				wrapOutputInLines, showProgressInterval*1000, indentationLevel+1, Constants.THIS_IS_REAL, MyUtils.concatTwoWriteMessageSteps(writeMessageStep, "1"));
 		totalFMR = MyUtils.addFileManipulationResults(totalFMR, localFMR);
 		HashSet<String> stopWords = new HashSet<String>();
-		if (justCalculateOriginalTFIDF){
+		if (generalExperimentType == GeneralExperimentType.JUST_CALCULATE_ORIGINAL_TF_IDF || generalExperimentType == GeneralExperimentType.JUST_CALCULATE_TIME_TF_IDF){
 			stopWords = TSVManipulations.readUniqueFieldFromTSV(SOInputPath, "stopWords.tsv", 0, 1, 
 					LogicalOperation.NO_CONDITION, 
 					0, ConditionType.NOTHING, "", FieldType.NOT_IMPORTANT, 
@@ -170,7 +171,7 @@ public class Algorithm {//test 9
 				projectId_Login_Tags_TypesAndTheirEvidence, 
 				graph, 
 				option1_whatToAddToAllBugs, option2_w, option3_TF, option4_IDF, option5_prioritizePAs, option6_whatToAddToAllCommits, option7_whenToCountTextLength, 
-				justCalculateOriginalTFIDF, 
+				generalExperimentType, 
 				wrapOutputInLines, showProgressInterval*100, indentationLevel+1, MyUtils.concatTwoWriteMessageSteps(writeMessageStep, "6"));
 		totalFMR = MyUtils.addFileManipulationResults(totalFMR, localFMR);
 
@@ -221,7 +222,7 @@ public class Algorithm {//test 9
 								projects, projectIdBugNumberAndTheirBugInfo, projectId_Login_Tags_TypesAndTheirEvidence, 
 								graph, localFMR, 
 								option1_whatToAddToAllBugs, option2_w, option3_TF, option4_IDF, option5_prioritizePAs, option6_whatToAddToAllCommits, option7_whenToCountTextLength, 
-								justCalculateOriginalTFIDF, 
+								generalExperimentType, 
 								wrapOutputInLines, showProgressInterval*100, indentationLevel+3, MyUtils.concatTwoWriteMessageSteps(writeMessageStep, step+"-3"));
 						totalFMR = MyUtils.addFileManipulationResults(totalFMR, localFMR);
 						if (totalFMR.errors > 0){
@@ -259,7 +260,8 @@ public class Algorithm {//test 9
 								ArrayList<String[]> community = projectsAndTheirCommunities.get(projectId);
 								HashMap<String, HashMap<String, Integer>> realAssignees = new HashMap<String, HashMap<String, Integer>>(); //bugNumber --> {login --> rank}
 								HashMap<String, HashMap<String, HashMap<Integer, ArrayList<Evidence>>>> logins_Tags_TypesAndTheirEvidence = projectId_Login_Tags_TypesAndTheirEvidence.get(projectId);
-								HashMap<String, HashSet<String>> wordAndTheDevelopersUsedThemUpToNow = new HashMap<String, HashSet<String>>();
+								HashMap<String, HashMap<String, Date>> wordsAnd_theDevelopersUsedThemUpToNow_lastUsageDate //"java"--> <"bob", 1/1/1>
+									= new HashMap<String, HashMap<String, Date>>();
 								
 								int numberOfBugsProcessed = 0;
 								HashSet<String> previousAssigneesInThisProject = new HashSet<>();
@@ -294,7 +296,7 @@ public class Algorithm {//test 9
 														wAC, originalNumberOfWordsInBugText, 
 														j+1, 
 														project.overalStartingDate, 
-														justCalculateOriginalTFIDF, community.size(), wordAndTheDevelopersUsedThemUpToNow, 
+														generalExperimentType, community.size(), wordsAnd_theDevelopersUsedThemUpToNow_lastUsageDate, 
 														option2_w, option4_IDF, option5_prioritizePAs, option8_recency,
 														indentationLevel+5));
 									}
@@ -314,17 +316,17 @@ public class Algorithm {//test 9
 									Assignee ra = AlgPrep.updateRankOfRealAssigneesAndReturnTheBestAssignee(realAssignees, a.bugNumber, scores, random);
 
 									//Update the stuff used for calculating idf:
-									if (justCalculateOriginalTFIDF){
+									if (generalExperimentType == GeneralExperimentType.JUST_CALCULATE_ORIGINAL_TF_IDF || generalExperimentType == GeneralExperimentType.JUST_CALCULATE_TIME_TF_IDF){
 										for (int k=0; k<wAC.size; k++)
-											if (wordAndTheDevelopersUsedThemUpToNow.containsKey(wAC.words[k])){
-												HashSet<String> logins = wordAndTheDevelopersUsedThemUpToNow.get(wAC.words[k]);
-												logins.add(a.login);
+											if (wordsAnd_theDevelopersUsedThemUpToNow_lastUsageDate.containsKey(wAC.words[k])){
+												HashMap<String, Date> developers_lastUsageDate = wordsAnd_theDevelopersUsedThemUpToNow_lastUsageDate.get(wAC.words[k]);
+												developers_lastUsageDate.put(a.login, a.date);
 											}
 //												wordAndTheDevelopersUsedThemUpToNow.put(wAC.words[k], wordAndTheDevelopersUsedThemUpToNow.get(wAC.words[k])+1);
 											else{
-												HashSet<String> logins = new HashSet<String>();
-												logins.add(a.login);
-												wordAndTheDevelopersUsedThemUpToNow.put(wAC.words[k], logins);
+												HashMap<String, Date> developers_lastUsageDate = new HashMap<String, Date>();
+												developers_lastUsageDate.put(a.login, a.date);
+												wordsAnd_theDevelopersUsedThemUpToNow_lastUsageDate.put(wAC.words[k], developers_lastUsageDate);
 											}
 									}
 
@@ -455,10 +457,17 @@ public class Algorithm {//test 9
 		boolean isMainRun = true; //: means that we are running the code for all projects.
 //		boolean isMainRun = false; //: means that we are running the code for only three test projects ("adobe/brackets", "fog/fog" and "lift/framework").
 		
-		boolean justCalculateOriginalTFIDF = true; //Un-comment this line and comment the next line if you want to run the TF-IDF experiment (which is only a small part of code) to compare against the results of the rest of this program (which is most of this code).
+		GeneralExperimentType generalExperimentType = GeneralExperimentType.CALCULATE_OUR_METRIC__TTBA;
+//		GeneralExperimentType generalExperimentType = GeneralExperimentType.JUST_CALCULATE_ORIGINAL_TF_IDF;
+//		GeneralExperimentType generalExperimentType = GeneralExperimentType.JUST_CALCULATE_TIME_TF_IDF;
+
+				
+//		boolean justCalculateOriginalTFIDF = true; //Un-comment this line and comment the next line if you want to run the TF-IDF experiment (which is only a small part of code) to compare against the results of the rest of this program (which is most of this code).
 //		boolean justCalculateOriginalTFIDF = false;
 		
-		//Threshold for considering assignments of developers who fixed at least N bugs: Default: All bugs should be considered (no filteration); N=1
+		//Threshold for considering assignments of developers who fixed at least N bugs: 
+			//Default: All bugs should be considered (no filtering); for default status, set the following number to "1":
+//		int developerFilterationThreshold_leastNumberOfBugsToFixToBeConsidered = 1435;
 		int developerFilterationThreshold_leastNumberOfBugsToFixToBeConsidered = 1;
 		
 //for (int num=0; num<2; num++)
@@ -523,14 +532,35 @@ public class Algorithm {//test 9
 											if (option6_whatToAddToAllCommits == BTOption6_whatToAddToAllCommits.ADD_mL || option6_whatToAddToAllCommits == BTOption6_whatToAddToAllCommits.ADD_PTD_mL)
 												usedCommitAsEvidence_Text = usedCommitAsEvidence_Text + "mL";
 										} 
-										String inputDir = "";
+										String inputDir;
 										String methodology = ""; 
-										if (justCalculateOriginalTFIDF){
+										switch (generalExperimentType){
+										case JUST_CALCULATE_ORIGINAL_TF_IDF:
 											methodology = "OnlyOrigTFIDF";
 											inputDir = Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__GH__EXPERIMENT_TFIDF;
-										}
-										else
+											break;
+										case JUST_CALCULATE_TIME_TF_IDF:
+											methodology = "OnlyTimeTFIDF";
+											inputDir = Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__GH__EXPERIMENT_TFIDF;
+											break;
+										default: //CALCULATE_OUR_METRIC__TTBA
+											methodology = "OurTTBAMethod";
 											inputDir = Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__GH__EXPERIMENT_MAIN;
+											break;
+										}
+//										if (generalExperimentType == GeneralExperimentType.JUST_CALCULATE_ORIGINAL_TF_IDF){
+//											methodology = "OnlyOrigTFIDF";
+//											inputDir = Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__GH__EXPERIMENT_TFIDF;
+//										}
+//										else
+//											if (generalExperimentType == GeneralExperimentType.JUST_CALCULATE_TIME_TF_IDF){
+//												methodology = "OnlyTimeTFIDF";
+//												inputDir = Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__GH__EXPERIMENT_TFIDF;
+//											}
+//											else{
+//												methodology = "OurTTBAMethod";
+//												inputDir = Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__GH__EXPERIMENT_MAIN;
+//											}
 										
 										switch (option2_w){//: Term weighting:
 											case NO_TERM_WEIGHTING:
@@ -621,7 +651,7 @@ public class Algorithm {//test 9
 												isMainRun, assignmentTypesToTriage, evidenceTypes, totalEvidenceTypes_count, 
 												experimentTitle, "-",
 												option1_whatToAddToAllBugs, option2_w, option3_TF, option4_IDF, option5_prioritizePAs, option6_whatToAddToAllCommits, option7_whenToCountTextLength, option8_recency,
-												justCalculateOriginalTFIDF, developerFilterationThreshold_leastNumberOfBugsToFixToBeConsidered, 
+												generalExperimentType, developerFilterationThreshold_leastNumberOfBugsToFixToBeConsidered, 
 												fMR,
 												false, 5000, 0, Constants.THIS_IS_REAL, "");		
 										if (fMR.errors > 0){
