@@ -37,7 +37,6 @@ import utils.Constants.LogicalOperation;
 import utils.Constants.ProjectType;
 import utils.Constants.SortOrder;
 
-
 public class Algorithm {//test 9
 	public static final int YES = 1;
 	public static final int NO = 0;
