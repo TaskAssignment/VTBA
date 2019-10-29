@@ -98,6 +98,18 @@ public class AlgPrep {
 		return false;
 	}
 	//------------------------------------------------------------------------------------------------------------------------
+	public static boolean isAProjectWhichIsUsedForMainRun(String projectId, String owner_repo){
+		String[] listOf10ProjectsForMainRun__owner_repo = {"rails/rails", "yui/yui3", "julialang/julia", "angular/angular.js", "elastic/elasticsearch", 
+				"travis-ci/travis-ci", "saltstack/salt", "khan/khan-exercises", "html5rocks/www.html5rocks.com", "tryghost/ghost"}; 
+		String[] listOf10ProjectsForMainRun__id = {"8514", "85670", "1644196", "460078", "507775", 
+				"1420493", "1390248", "1723225", "5238231", "9852918"}; 
+		
+		for (int i=0; i<listOf10ProjectsForMainRun__owner_repo.length; i++)
+			if (owner_repo.equals(listOf10ProjectsForMainRun__owner_repo[i]) || projectId.equals(listOf10ProjectsForMainRun__id[i]))
+				return true;
+		return false;
+	}
+	//------------------------------------------------------------------------------------------------------------------------
 	public static Assignee updateRankOfRealAssigneesAndReturnTheBestAssignee(HashMap<String, HashMap<String, Integer>> realAssignees, 
 			String bugNumber, HashMap<String, Double> scores, Random random){
 		//Rank the list of all community members, then update the ranks of real assignees in realAssignees. Finally return the assignee with the best rank: 
@@ -148,14 +160,15 @@ public class AlgPrep {
 	//------------------------------------------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------------------------------------------------
 	public static double calculateScoreOfDeveloperForBugAssignment(String login, Assignment a, 
-			Graph graph, 
+			Graph graph, Graph updatingGraph, 
 			int assignmentTypeToTriage, int[] evidenceTypesToConsider, int evidenceTypesToConsider_count, 
 			HashMap<String, HashMap<String, HashMap<Integer, ArrayList<Evidence>>>> logins_Tags_TypesAndTheirEvidence_InAProject,
 			HashSet<String> previousAssigneesInThisProject, 
 			WordsAndCounts wAC, int originalNumberOfWordsInBugText, 
 			int seqNum, //seqNum is the sequence number of the bug. It is used for determining the recency based on FASE paper formula (number of bugs between a bugAssignmentEvidence and the current bug). 
 			Date beginningDateOfProject, 
-			GeneralExperimentType generalExperimentType, int numberOfCommunityMembers, HashMap<String, HashMap<String, Date>> wordsAnd_theDevelopersUsedThemUpToNow_lastUsageDate, //"java"--> <"bob", 1/1/1> 
+			GeneralExperimentType generalExperimentType, int numberOfCommunityMembers, HashMap<String, HashMap<String, Date>> wordsAnd_theDevelopersUsedThemUpToNow_lastUsageDate, //"java"--> <"bob", 1/1/1>
+			HashMap<String, HashMap<String, HashSet<Date>>> wordsAnd_theDevelopersUsedThemUpToNow_allUsageDates /*"java"--> <"bob", <2019/1/1, 2018/2/2, 2019/3/3, ...>>*/, 
 			BTOption2_w option2_w, BTOption4_IDF option4_IDF, BTOption5_prioritizePAs option5_prioritizePAs, BTOption8_recency option8_recency, 
 			int indentationLevel){
 		//This method calculates the score of developer "login" for assignment "a". 
@@ -163,7 +176,7 @@ public class AlgPrep {
 		//			Later, it also considers the evidence in other projects (the project family experiment) using projectsAndTheirAssignments.
 		Double score = 0.0;
 		Double subScore = 0.0;
-		if (generalExperimentType == GeneralExperimentType.JUST_CALCULATE_ORIGINAL_TF_IDF || generalExperimentType == GeneralExperimentType.JUST_CALCULATE_TIME_TF_IDF){
+		if (generalExperimentType == GeneralExperimentType.JUST_CALCULATE_ORIGINAL_TF_IDF || generalExperimentType == GeneralExperimentType.JUST_CALCULATE_TIME_TF_IDF || generalExperimentType == GeneralExperimentType.JUST_CALCULATE_TIME_TF_IDF2){
 			
 //			HashMap<String, HashMap<String, Date>> hh = new HashMap<String, HashMap<String, Date>>();
 //			hh.get("a").size()
@@ -190,12 +203,14 @@ public class AlgPrep {
 												if (generalExperimentType == GeneralExperimentType.JUST_CALCULATE_ORIGINAL_TF_IDF){
 													subScore = subScore + wAC.counts[i] * e.tf * Math.log(numberOfCommunityMembers / numberOfDevelopersUsedTheTerm); //subScore = subScore + tf(term, bug) * idf(term, allDevs)
 												}
-												else{//means that generalExperimentType == GeneralExperimentType.JUST_CALCULATE_TIME_TF_IDF:
-													int dayDiff = MyUtils.getDifferenceInDays(a.date, developers_lastUsageDate.get(login)); //dayDiff: time difference between "date of usage of the term by the developer" and "date of the new bug". 
-													if (dayDiff == 0) //If the two dates above are the same, dayDiff becomes 0. So, we will consider it as 1, since it is going to the denominator, in the recency formula of Time-TF-IDF
-														dayDiff = 1;
-													Double recency_for_Time_TF_IDF = 1.0/numberOfDevelopersUsedTheTerm + 1.0/(Math.sqrt(dayDiff));
-													subScore = subScore + recency_for_Time_TF_IDF * wAC.counts[i] * e.tf * Math.log(numberOfCommunityMembers / numberOfDevelopersUsedTheTerm); //subScore = subScore + tf(term, bug) * idf(term, allDevs)
+												else{//means that generalExperimentType == GeneralExperimentType.JUST_CALCULATE_TIME_TF_IDF or generalExperimentType == GeneralExperimentType.JUST_CALCULATE_TIME_TF_IDF2:
+													if (generalExperimentType == GeneralExperimentType.JUST_CALCULATE_TIME_TF_IDF){
+														int dayDiff = MyUtils.getDifferenceInDays(a.date, developers_lastUsageDate.get(login)); //dayDiff: time difference between "date of usage of the term by the developer" and "date of the new bug". 
+														if (dayDiff == 0) //If the two dates above are the same, dayDiff becomes 0. So, we will consider it as 1, since it is going to the denominator, in the recency formula of Time-TF-IDF
+															dayDiff = 1;
+														Double recency_for_Time_TF_IDF = 1.0/numberOfDevelopersUsedTheTerm + 1.0/(Math.sqrt(dayDiff));
+														subScore = subScore + recency_for_Time_TF_IDF * wAC.counts[i] * e.tf * Math.log(numberOfCommunityMembers / numberOfDevelopersUsedTheTerm); //subScore = subScore + tf(term, bug) * idf(term, allDevs)
+													}
 												}
 											}
 											else{
@@ -203,9 +218,31 @@ public class AlgPrep {
 												break;
 											}
 										}
-										else{
-											error_A++;
-											break;
+										else
+											if (wordsAnd_theDevelopersUsedThemUpToNow_allUsageDates.containsKey(wAC.words[i])){ //: This is used for GeneralExperimentType.JUST_CALCULATE_TIME_TF_IDF2
+												int numberOfDevelopersUsedTheTerm = wordsAnd_theDevelopersUsedThemUpToNow_allUsageDates.get(wAC.words[i]).size();
+												HashMap<String, HashSet<Date>> developers_allUsageDates = wordsAnd_theDevelopersUsedThemUpToNow_allUsageDates.get(wAC.words[i]);
+												if (developers_allUsageDates.containsKey(login)){					
+													if (generalExperimentType == GeneralExperimentType.JUST_CALCULATE_TIME_TF_IDF2){
+														Double recency_for_Time_TF_IDF = 1.0/numberOfDevelopersUsedTheTerm;
+														HashSet<Date> allUsageDates = developers_allUsageDates.get(login);
+														for (Date d: allUsageDates){
+															int dayDiff = MyUtils.getDifferenceInDays(a.date, d); //dayDiff: time difference between "date of usage of the term by the developer" and "date of the new bug". 
+															if (dayDiff == 0) //If the two dates above are the same, dayDiff becomes 0. So, we will consider it as 1, since it is going to the denominator, in the recency formula of Time-TF-IDF
+																dayDiff = 1;
+															recency_for_Time_TF_IDF = recency_for_Time_TF_IDF + 1.0/(Math.sqrt(dayDiff));
+														}
+														subScore = subScore + recency_for_Time_TF_IDF * wAC.counts[i] * e.tf * Math.log(numberOfCommunityMembers / numberOfDevelopersUsedTheTerm); //subScore = subScore + tf(term, bug) * idf(term, allDevs)
+													}
+												}
+												else{
+													error_A++;
+													break;
+												}
+											}
+											else{
+												error_A++;
+												break;
 										}
 									}
 								}
@@ -238,7 +275,10 @@ public class AlgPrep {
 				for (int i=0; i<wAC.size; i++){//: Iterating over keywords (tags) of bug.
 					if (tags_TypesAndTheirEvidence_ForADeveloperInAProject.containsKey(wAC.words[i])){//: means that if this user has an evidence including this tag.
 						HashMap<Integer, ArrayList<Evidence>> typesAndEvidenceOfThisDeveloperForATag = tags_TypesAndTheirEvidence_ForADeveloperInAProject.get(wAC.words[i]); //: this is assuming that the non-SO-tag keywords are removed from the text of a bug.
-						termWeight = graph.getNodeWeight(wAC.words[i]);
+						if (generalExperimentType == GeneralExperimentType.CALCULATE_VTBA_GH__CALCULATE_WEIGHS_ONLINE)
+							termWeight = updatingGraph.getNodeWeight(wAC.words[i]);
+						else
+							termWeight = graph.getNodeWeight(wAC.words[i]);
 						//Considering all different types of evidence (0: Constants.EVIDENCE_TYPE__BUG_TITLE to Constants.EVIDENCE_TYPES__COUNT-1):
 						subScore = 0.0;
 						for (int et_index=0; et_index<evidenceTypesToConsider_count; et_index++){//et: "evidence type"
@@ -690,16 +730,47 @@ public class AlgPrep {
 	//------------------------------------------------------------------------------------------------------------------------
 	public static void addToIndex(String evidenceText, int evidenceType, int seqNum, int[] virtualSeqNum, //seqNum is the sequence number of the evidence. If it is an assignment, the row number in the assignments file (first assignment in the project is 1 and the next one increment by one). If it is not an assignment (e.g., it is a commit), the seqNum of the last assignment before that evidence will be considered.
 			int originalNumberOfWordsInTheText, 
-			Graph graph, String projectId, String login, String date, 
+			Graph graph, Graph[] graphs, String projectId, String projectName, String login, String date, 
 			HashMap<String, HashMap<String, HashMap<String, HashMap<Integer, ArrayList<Evidence>>>>> projectId_Login_Tags_TypesAndTheirEvidence, 
 			BTOption3_TF option3_TF, BTOption7_whenToCountTextLength option7_whenToCountTextLength,  
 			GeneralExperimentType generalExperimentType, 
 			FileManipulationResult fMR){
+		int indexOfProjectInTheListOf13Projects = Constants.indexOfProjectInTheListOf13Projects(projectName);
 		String[] words = evidenceText.split(" ");
 		for (int j=0; j<words.length; j++){
 			if (!words[j].equals("") 
-					&& (generalExperimentType == GeneralExperimentType.JUST_CALCULATE_ORIGINAL_TF_IDF  || generalExperimentType == GeneralExperimentType.JUST_CALCULATE_TIME_TF_IDF || graph.hasNode(words[j]))){ //: means that if this word is an SO tag.
+					&& (
+							generalExperimentType == GeneralExperimentType.JUST_CALCULATE_ORIGINAL_TF_IDF  
+							|| (generalExperimentType == GeneralExperimentType.CALCULATE_OUR_METRIC__TTBA && graph.hasNode(words[j]))
+							|| generalExperimentType == GeneralExperimentType.JUST_CALCULATE_TIME_TF_IDF 
+							|| generalExperimentType == GeneralExperimentType.JUST_CALCULATE_TIME_TF_IDF2 
+							|| generalExperimentType == GeneralExperimentType.CALCULATE_TBA 
+							|| (generalExperimentType == GeneralExperimentType.CALCULATE_VTBA_GH) 
+							|| (generalExperimentType == GeneralExperimentType.CALCULATE_VTBA_GH__CALCULATE_WEIGHS_ONLINE) 
+							|| (generalExperimentType != GeneralExperimentType.CALCULATE_VTBA_SOURCECODE && graph.hasNode(words[j]))
+							|| (generalExperimentType == GeneralExperimentType.CALCULATE_VTBA_SOURCECODE && graphs[indexOfProjectInTheListOf13Projects].hasNode(words[j]))
+							)
+//					&& (
+//							generalExperimentType == GeneralExperimentType.JUST_CALCULATE_ORIGINAL_TF_IDF  
+//							|| (generalExperimentType == GeneralExperimentType.CALCULATE_OUR_METRIC__TTBA && graph.hasNode(words[j]) && words[j].length() > 2)
+//							|| generalExperimentType == GeneralExperimentType.JUST_CALCULATE_TIME_TF_IDF 
+//							|| generalExperimentType == GeneralExperimentType.JUST_CALCULATE_TIME_TF_IDF2 
+//							|| generalExperimentType == GeneralExperimentType.CALCULATE_TBA 
+//							|| (generalExperimentType == GeneralExperimentType.CALCULATE_VTBA_GH && words[j].length() > 2) 
+//							|| (generalExperimentType != GeneralExperimentType.CALCULATE_VTBA_SOURCECODE && graph.hasNode(words[j]))
+//							|| (generalExperimentType == GeneralExperimentType.CALCULATE_VTBA_SOURCECODE && graphs[indexOfProjectInTheListOf13Projects].hasNode(words[j]) && words[j].length() > 2)
+//							)
+					&& (
+							generalExperimentType != GeneralExperimentType.CALCULATE_TBA
+							|| (
+									!words[j].matches(Constants.startsWithNumber_ForRegEx)
+//									&& words[j].length()>3
+//									&& graph.hasNode(words[j])
+									)
+							)
+					){ //: means that if this word is an SO tag or one of the thesaurus keywords.
 				//First, start by projectId:
+				
 				HashMap<String, HashMap<String, HashMap<Integer, ArrayList<Evidence>>>> login_Tags_TypesAndTheirEvidence;
 				if (projectId_Login_Tags_TypesAndTheirEvidence.containsKey(projectId))
 					login_Tags_TypesAndTheirEvidence = projectId_Login_Tags_TypesAndTheirEvidence.get(projectId);
@@ -771,7 +842,7 @@ public class AlgPrep {
 			TreeMap<String, String[]> projects, TreeMap<String, String[]> projectIdBugNumberAndTheirBugInfo, 
 			HashMap<String, HashMap<String, HashMap<String, HashMap<Integer, ArrayList<Evidence>>>>> projectId_Login_Tags_TypesAndTheirEvidence, 
 			//HashMap<projId, HashMap<login, HashMap<tag, ArrayList<Evidence>>>>
-			Graph graph, FileManipulationResult fMR, 
+			Graph graph, Graph[] graphs, FileManipulationResult fMR, 
 			BTOption1_whatToAddToAllBugs option1, BTOption2_w option2_w, BTOption3_TF option3_TF, BTOption4_IDF option4_IDF, BTOption5_prioritizePAs option5_prioritizePAs, BTOption6_whatToAddToAllCommits option6_whatToAddToAllCommits, BTOption7_whenToCountTextLength option7_whenToCountTextLength, 
 			GeneralExperimentType generalExperimentType, 
 			boolean wrapOutputInLines, int showProgressInterval, int indentationLevel, String writeMessageStep){
@@ -800,8 +871,11 @@ public class AlgPrep {
 
 					String text;
 					project = new Project(projects, projectId, indentationLevel+2, fMR);
+					String projectName = project.owner_repo.substring(project.owner_repo.indexOf("/")+1);
 					int[] originalNumberOfWordsInText_array = new int[1];
 					text = getBugText(project, bug, originalNumberOfWordsInText_array, option1);
+					if (generalExperimentType == GeneralExperimentType.CALCULATE_TBA)
+						text = StringManipulations.clean(text.toLowerCase().replaceAll(Constants.allValidCharactersInSOURCECODE_Strict_ForRegEx, " "));
 					int originalNumberOfWordsInText = originalNumberOfWordsInText_array[0];
 
 					if (text.length() > 2){
@@ -810,7 +884,7 @@ public class AlgPrep {
 						for (int j=0; j<Constants.NUMBER_OF_ASSIGNEE_TYPES; j++)
 							virtualSeqNum[j] = Constants.SEQ_NUM____NO_NEED_TO_TRIAGE_THIS_TYPE___OR___THIS_IS_NOT__NON_B_A_EVIDENCE;
 						addToIndex(text, evidenceType, i+1, virtualSeqNum, originalNumberOfWordsInText, 
-								graph, projectId, login, date, projectId_Login_Tags_TypesAndTheirEvidence, option3_TF, option7_whenToCountTextLength, generalExperimentType, fMR);
+								graph, graphs, projectId, projectName, login, date, projectId_Login_Tags_TypesAndTheirEvidence, option3_TF, option7_whenToCountTextLength, generalExperimentType, fMR);
 					}
 					else{
 //						fMR.errors++;
@@ -844,7 +918,7 @@ public class AlgPrep {
 			TreeMap<String, String[]> projects, TreeMap<String, String[]> projectIdBugNumberAndTheirBugInfo, 
 			HashMap<String, HashMap<String, HashMap<String, HashMap<Integer, ArrayList<Evidence>>>>> projectId_Login_Tags_TypesAndTheirEvidence, 
 			//HashMap<projId, HashMap<login, HashMap<tag, ArrayList<Evidence>>>>
-			Graph graph, 
+			Graph graph, Graph[] graphs, 
 			BTOption1_whatToAddToAllBugs option1, BTOption2_w option2_w, BTOption3_TF option3_TF, BTOption4_IDF option4_IDF, BTOption5_prioritizePAs option5_prioritizePAs, BTOption6_whatToAddToAllCommits option6_whatToAddToAllCommits, BTOption7_whenToCountTextLength option7_whenToCountTextLength, 
 			GeneralExperimentType generalExperimentType, 
 			boolean wrapOutputInLines, int showProgressInterval, int indentationLevel, String writeMessageStep){
@@ -878,6 +952,7 @@ public class AlgPrep {
 							if (!committer.equals(" ")){
 								String text = "";
 								Project project = new Project(projects, projectId, indentationLevel+2, fMR);
+								String projectName = project.owner_repo.substring(project.owner_repo.indexOf("/")+1);
 								int[] originalNumberOfWordsInText_array = new int[]{1};
 								text = getCommitText(project, commitMessage, originalNumberOfWordsInText_array, option6_whatToAddToAllCommits);
 								originalNumberOfWordsInText = originalNumberOfWordsInText_array[0];
@@ -895,7 +970,7 @@ public class AlgPrep {
 								}
 								if (text.length() > 2)
 									addToIndex(text, Constants.EVIDENCE_TYPE_COMMIT, Constants.SEQ_NUM____THIS_IS_NOT__B_A_EVIDENCE, virtualSeqNum, originalNumberOfWordsInText, 
-											graph, projectId, committer, date, projectId_Login_Tags_TypesAndTheirEvidence, option3_TF, option7_whenToCountTextLength, generalExperimentType, fMR);
+											graph, graphs, projectId, projectName, committer, date, projectId_Login_Tags_TypesAndTheirEvidence, option3_TF, option7_whenToCountTextLength, generalExperimentType, fMR);
 								else{
 //									fMR.errors++;
 //									System.out.println("Error! Non-assignment evidence length is zero!");
