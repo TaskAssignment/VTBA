@@ -1,14 +1,17 @@
 package main;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -24,10 +27,12 @@ import utils.StringManipulations;
 import utils.TSVManipulations;
 import utils.Constants.ConditionType;
 import utils.Constants.FieldType;
+import utils.Constants.GeneralExperimentType;
 import utils.Constants.LogicalOperation;
 import utils.Constants.ProjectType;
 import utils.Constants.SortOrder;
 import utils.JSONToTSV;
+import utils.LongClass;
 
 public class DataPreparation {
 	//------------------------------------------------------------------------------------------------------------------------
@@ -1660,54 +1665,547 @@ public class DataPreparation {
 	}
 	//------------------------------------------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------------------------------------------------
+	static boolean containsAtLeastOneAlphabetCharacter(String s){
+		return s.matches(".*[a-zA-Z]+.*");
+	}
 	//------------------------------------------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------------------------------------------------
-	public static void prepareDataFiles(){ 
-		//This method was moved from Algorithm.java
+	static boolean containsTwoOrMoreSpecialCharactersAfterEachOther(String s){//Special characters: +-.# 
+		return s.matches(".*[\\#\\-\\+\\.][\\#\\-\\+\\.].*");
+	}
+	//------------------------------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------------
+	public static void generateNodeAndEdgeWeights2_basedOnTextualElementsOfOurDataSet_bugsEtc(String inputPath, 
+			String stopWordsInputPath, String stopWordsInputFile, int numberOfFilesToConsider/*: If this parameter is equal to 1, then only bugs are considered. If it is 6, then bugs, commits, PRs and their comments will be considered.*/,  
+			String outputPath, String nodeWeightsOutputFile, 
+			int showProgressInterval, int indentationLevel, long testOrReal, String writeMessageStep){
+		//This method reads textual info of all bugs, commits, PRs, bCs, CCs and PRComments. Then, finds numbers of occurrences. After that, builds the node weights. Then saves them into a file.
+		Date d1 = new Date();
+		MyUtils.println("-----------------------------------", indentationLevel);
+		MyUtils.println("-----------------------------------", indentationLevel);
+		MyUtils.println(writeMessageStep+"-Building the weighted graph and saving in file:", indentationLevel);
+		MyUtils.println("Started ...", indentationLevel);
 		
-//		//This was ran successfully (2016/11/14):
-//		//First, convert the XML SO data set to TSV:
-//		XMLParser.xmlToTSV(Constants.DATASET_DIRECTORY_SO_1_XML_EXTERNAL, "Posts.xml", Constants.DATASET_DIRECTORY_SO_2_TSV, "Posts.tsv",  
-//		"Id$PostTypeId$OwnerUserId$ParentId$Score$[]Tags$CreationDate$AnswerCount$Title", 
-//		"&lt;", "&gt;", "\\&lt\\;", "\\&gt\\;", 
-//		"Title",
-//		500000, 0, Constants.THIS_IS_REAL, "1");
+		
+		//1-1:
+		//Reading Stopwords:
+		HashSet<String> stopWords = new HashSet<String>();
+		stopWords = TSVManipulations.readUniqueFieldFromTSV(stopWordsInputPath, stopWordsInputFile, 0, 1, 
+				LogicalOperation.NO_CONDITION, 
+				0, ConditionType.NOTHING, "", FieldType.NOT_IMPORTANT, 
+				0, ConditionType.NOTHING, "", FieldType.NOT_IMPORTANT,
+				true, indentationLevel+1, 100000, Constants.THIS_IS_REAL, MyUtils.concatTwoWriteMessageSteps(writeMessageStep,"1"));
+		//Reading bugs' text:
+		String[] textualElementsInputFiles = new String[]{"1-bugs", "2-commits", "3-PRs", "4-bugComments", "5-commitComments", "6-PRComments"};
+		int[] textFieldNumbers = new int[]{7, 4, 7, 4, 4, 4}; //: This is the main textual element (i.e., body).
+		int[] additionalTextFieldNumbers = new int[]{5, Constants.NO_EXTRA_TEXTUAL_ELEMENT, 5, Constants.NO_EXTRA_TEXTUAL_ELEMENT, Constants.NO_EXTRA_TEXTUAL_ELEMENT, Constants.NO_EXTRA_TEXTUAL_ELEMENT}; //: This is the other textual element (i.e., title). -1 means that there is 
+		int[] numberOfFields = new int[]{9, 6, 9, 6, 6, 6};
+		HashMap<String, Long> occurrences = new HashMap<String, Long>(); 
+		LongClass maxNumberOfOccurrences = new LongClass(0);
+
+		MyUtils.println(MyUtils.concatTwoWriteMessageSteps(writeMessageStep,"2")+"- Node weights:", indentationLevel+1);
+		MyUtils.println("Started ...", indentationLevel+2);
+
+		int error1 = 0;
+		for (int j=0; j<numberOfFilesToConsider; j++){//Iterating over all input files (bugs, commits, PRs, bugComments, commitComments, PRComments):
+			try{ 
+				BufferedReader br;
+				//Reading posts and adding <repoId, totalNumberOfMembers> in a hashMap:
+				br = new BufferedReader(new FileReader(inputPath + "\\" + textualElementsInputFiles[j]+".tsv")); 
+				MyUtils.println(MyUtils.concatTwoWriteMessageSteps(writeMessageStep,"2-")+Integer.toString(j+1)+"- Processing "+ textualElementsInputFiles[j]+".tsv:", indentationLevel+2);
+				MyUtils.println("Started ...", indentationLevel+3);
+				
+				String[] fields;
+				String s;
+				br.readLine(); //header.
+				while ((s=br.readLine())!=null){
+					fields = s.split("\t");
+					if (fields.length != numberOfFields[j])
+						error1++;
+					else{
+						fields[textFieldNumbers[j]] = StringManipulations.clean(fields[textFieldNumbers[j]]).toLowerCase().replaceAll(Constants.allValidCharactersInSOURCECODE_Strict_ForRegEx, " ");
+						String[] words1 = fields[textFieldNumbers[j]].split(" ");
+						updateOccurrences(words1, stopWords, occurrences, maxNumberOfOccurrences);
+						
+						if (additionalTextFieldNumbers[j] != Constants.NO_EXTRA_TEXTUAL_ELEMENT){
+							fields[additionalTextFieldNumbers[j]] = StringManipulations.clean(fields[additionalTextFieldNumbers[j]]).toLowerCase().replaceAll(Constants.allValidCharactersInSOURCECODE_Strict_ForRegEx, " ");
+							String[] words2 = fields[additionalTextFieldNumbers[j]].split(" ");
+							updateOccurrences(words2, stopWords, occurrences, maxNumberOfOccurrences);
+						}
+					}//else.
+				}//while ((s=br....
+				if (error1>0)
+					System.out.println(MyUtils.indent(indentationLevel+3) + "Error) Number of records with != " + numberOfFields[j] + " fields: " + error1);
+							
+				MyUtils.println("Finished.", indentationLevel+3);
+				br.close();
+			}catch (Exception e){
+				e.printStackTrace();
+			}			
+			
+		} //for (j....
+		MyUtils.println("Finished.", indentationLevel+2);
+		MyUtils.println("-----------------------------------", indentationLevel+2);	
+		
+		TreeMap<String, Double> nodeWeights = new TreeMap<String, Double>();
+		for (Map.Entry<String, Long> entry: occurrences.entrySet()){
+			String keyword = entry.getKey();
+			Long occurrenceOfThisKeyword = entry.getValue();
+			//calculate node weight and normalize it (by dividing it to log10(TOTAL_NUMBER_OF_SO_QUESTIONS)):
+			double nodeWeight = Math.log10(((double)maxNumberOfOccurrences.get())/occurrenceOfThisKeyword) / Math.log10(maxNumberOfOccurrences.get());
+			nodeWeights.put(keyword, nodeWeight);
+		}
+		
+		//Saving nodes' file:
+		String[] nodeFileTitles = {"Node", "Weight"};
+		TSVManipulations.saveKeyAndDoubleValuesAsTSVFile(outputPath, nodeWeightsOutputFile, nodeWeights, 2, nodeFileTitles, true, 
+				showProgressInterval, indentationLevel+1, testOrReal, MyUtils.concatTwoWriteMessageSteps(writeMessageStep,"1-3-"));
+		MyUtils.println("Finished.", indentationLevel);
+		MyUtils.println("-----------------------------------", indentationLevel+1);	
 
 
-		//This was ran successfully (2016/11/15):
-		//Now, extract the occurrence of each tag:
-		extractOccurrencesOfTagsInSODataSet(Constants.DATASET_DIRECTORY_SO_2_TSV, "Posts.tsv", Constants.DATASET_DIRECTORY_SO_3_TSV_CLEANED, "occurrences.tsv", 
-				1000000, 0, Constants.THIS_IS_REAL, "2");
-		
-		
-//		//This was ran successfully (2016/11/15):
-//		//This method will be called just once (to generate the output files):
-//		extractCoOccurrencesOfTagsInSODataSet(Constants.DATASET_DIRECTORY_SO_2_TSV, "Posts.tsv", Constants.DATASET_DIRECTORY_SO_3_TSV_CLEANED, "coOccurrences.tsv", 
-//				1000000, 0, Constants.THIS_IS_REAL, "3");
-//		//The above method ran successfully with the default downloaded SO data set (XML). Can be run again for the new data set.
-//		//In fact, in our tool, we should have had this output file (Parley was working on that but wasn't finished).
+		Date d2 = new Date();
+		MyUtils.println("Total time (step " + writeMessageStep + "): " + (float)(d2.getTime()-d1.getTime())/1000  + " seconds.", indentationLevel);
+		MyUtils.println("-----------------------------------", indentationLevel);
+		MyUtils.println("-----------------------------------", indentationLevel);
+	}
+	//------------------------------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------------
+	public static void listFiles(String directoryName, List<File> files) {
+	    File directory = new File(directoryName);
 
+	    // Get all files from a directory.
+	    File[] fList = directory.listFiles();
+	    if(fList != null)
+	        for (File file : fList) 
+	            if (file.isFile()) 
+	                files.add(file);
+	            else 
+	            	if (file.isDirectory()) 
+	            		listFiles(file.getAbsolutePath(), files);
+	    } // listf().
+//------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------
+	public static void updateOccurrences(String[] words, HashSet<String> stopWords, HashMap<String, Long> occurrences, LongClass maxNumberOfOccurrences){
+		for (int i=0; i<words.length; i++){
+//			words[i] = words[i].replaceAll(Constants.allValidCharactersInSOURCECODE_ForRegEx, "");
+			if (!stopWords.contains(words[i]) 
+					&& containsAtLeastOneAlphabetCharacter(words[i]) 
+					&& words[i].length()>2 
+					&& !containsTwoOrMoreSpecialCharactersAfterEachOther(words[i])
+					&& !words[i].matches(Constants.startsWithNumber_ForRegEx)
+					){
+				if (occurrences.containsKey(words[i])){
+					long occ = occurrences.get(words[i]);
+					occurrences.put(words[i], occ+1);
+					if (occ+1 > maxNumberOfOccurrences.get())
+						maxNumberOfOccurrences.set(occ+1);
+				} //if (occu....
+				else{
+					occurrences.put(words[i], (long) 1);
+					if (1 > maxNumberOfOccurrences.get())
+						maxNumberOfOccurrences.set(1);
+				}//else of if (occu....
+			}
+		}
+	}//updateOccurrences().
+	//------------------------------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------------
+	public static void generateNodeAndEdgeWeights3_basedOnSourceCode(String inputPath /*: This is the path of source code */, 
+			String stopWordsInputPath, String stopWordsInputFileName, 
+			String outputPath, String nodeWeightsOutputFileNamePrefix /*This is the Prefix that is added to the name of file for the term weights in each project*/, 
+			int thresholdForOccurrenceOfKeywordToBeConsidered, 
+			boolean onlyConsiderSourceCodeFiles, 
+			int showProgressInterval, int indentationLevel, long testOrReal, String writeMessageStep){
+		//This method reads textual info of all source code files. Then, finds numbers of occurrences. After that, builds the node weights. Then saves them into a file. 
+		Date d1 = new Date();
+		MyUtils.println("-----------------------------------", indentationLevel);
+		MyUtils.println("-----------------------------------", indentationLevel);
+		MyUtils.println(MyUtils.concatTwoWriteMessageSteps(writeMessageStep," Building the weights from source codes of each project and saving the results in a file per project:"), indentationLevel);
+		MyUtils.println("Started ...", indentationLevel+1);
 		
+		HashMap<String, ArrayList<String>> languagesAndTheirSourceCodeFileExtensions = new HashMap<String, ArrayList<String>>();
+		HashSet<String> allSourceCodeFileExtensions = new HashSet<String>();
+		if (onlyConsiderSourceCodeFiles){
+			ArrayList<String> extensions; 
+			
+			extensions = new ArrayList<String>();
+			extensions.add("rb");
+			languagesAndTheirSourceCodeFileExtensions.put("ruby", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("html");
+			extensions.add("htm");
+			languagesAndTheirSourceCodeFileExtensions.put("html", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("js");
+			extensions.add("mjs");
+			languagesAndTheirSourceCodeFileExtensions.put("javascript", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("css");
+			languagesAndTheirSourceCodeFileExtensions.put("css", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("coffee");
+			extensions.add("litcoffee");
+			languagesAndTheirSourceCodeFileExtensions.put("coffeescript", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("sh");
+			languagesAndTheirSourceCodeFileExtensions.put("shell", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("y");
+			languagesAndTheirSourceCodeFileExtensions.put("yacc", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("php");
+			extensions.add("phtml");
+			extensions.add("php3");
+			extensions.add("php4");
+			extensions.add("php7");
+			extensions.add("phps");
+			extensions.add("php-s");
+			extensions.add("pht");
+			languagesAndTheirSourceCodeFileExtensions.put("php", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("scala");
+			extensions.add("sc");
+			languagesAndTheirSourceCodeFileExtensions.put("scala", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("java");
+			languagesAndTheirSourceCodeFileExtensions.put("java", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("bat");
+			extensions.add("cmd");
+			extensions.add("btm");
+			languagesAndTheirSourceCodeFileExtensions.put("batchfile", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("jl");
+			languagesAndTheirSourceCodeFileExtensions.put("julia", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("c");
+			extensions.add("h");
+			languagesAndTheirSourceCodeFileExtensions.put("c", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("c++");
+			extensions.add("c");
+			extensions.add("cc");
+			extensions.add("cpp");
+			extensions.add("cxx");
+			extensions.add("c++");
+			extensions.add("h");
+			extensions.add("hh");
+			extensions.add("hpp");
+			extensions.add("hxx");
+			extensions.add("h++");
+			languagesAndTheirSourceCodeFileExtensions.put("c++", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("scm");
+			extensions.add("ss");
+			languagesAndTheirSourceCodeFileExtensions.put("scheme", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("make");
+			extensions.add("mak");
+			languagesAndTheirSourceCodeFileExtensions.put("makefile", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("ll");
+			extensions.add("s");
+			languagesAndTheirSourceCodeFileExtensions.put("llvm", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("clj");
+			extensions.add("cljs");
+			extensions.add("cljc");
+			extensions.add("edn");
+			languagesAndTheirSourceCodeFileExtensions.put("clojure", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("m");
+			languagesAndTheirSourceCodeFileExtensions.put("matlab", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("f");
+			extensions.add("for");
+			extensions.add("f90");
+			languagesAndTheirSourceCodeFileExtensions.put("fortran", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("pwn");
+			languagesAndTheirSourceCodeFileExtensions.put("pawn", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("asm");
+			extensions.add("s");
+			languagesAndTheirSourceCodeFileExtensions.put("assembly", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("go");
+			languagesAndTheirSourceCodeFileExtensions.put("go", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("m");
+			extensions.add("nb");
+			extensions.add("mt");
+			extensions.add("cdf");
+			extensions.add("mx");
+			extensions.add("wl");
+			languagesAndTheirSourceCodeFileExtensions.put("mathematica", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("h");
+			extensions.add("m");
+			extensions.add("mm");
+			languagesAndTheirSourceCodeFileExtensions.put("objective-c", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("lua");
+			languagesAndTheirSourceCodeFileExtensions.put("lua", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("nsi");
+			extensions.add("nsh");
+			languagesAndTheirSourceCodeFileExtensions.put("nsis", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("py");
+			extensions.add("pyc");
+			extensions.add("pyd");
+			extensions.add("pyo");
+			extensions.add("pyw");
+			extensions.add("pyz");
+			languagesAndTheirSourceCodeFileExtensions.put("python", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("ahk");
+			languagesAndTheirSourceCodeFileExtensions.put("autohotkey", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("r");
+			extensions.add("rdata");
+			extensions.add("rds");
+			extensions.add("rda");
+			languagesAndTheirSourceCodeFileExtensions.put("r", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("pl");
+			extensions.add("pm");
+			extensions.add("t");
+			extensions.add("pod");
+			languagesAndTheirSourceCodeFileExtensions.put("perl", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("scptd");
+			extensions.add("applescript");
+			languagesAndTheirSourceCodeFileExtensions.put("applescript", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("ps");
+			languagesAndTheirSourceCodeFileExtensions.put("postscript", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("groovy");
+			languagesAndTheirSourceCodeFileExtensions.put("groovy", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("g4");
+			extensions.add("g3");
+			extensions.add("g3l");
+			extensions.add("g3pl");
+			extensions.add("g3t");
+			extensions.add("g");
+			languagesAndTheirSourceCodeFileExtensions.put("antlr", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("el");
+			extensions.add("elc");
+			languagesAndTheirSourceCodeFileExtensions.put("emacs lisp", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("ftl");
+			extensions.add("fm");
+			languagesAndTheirSourceCodeFileExtensions.put("freemarker", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("yaml");
+			extensions.add("yml");
+			languagesAndTheirSourceCodeFileExtensions.put("yaml", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("sls");
+			languagesAndTheirSourceCodeFileExtensions.put("saltstack", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("ps1");
+			extensions.add("ps1xml");
+			extensions.add("psc1");
+			extensions.add("psd1");
+			extensions.add("psm1");
+			extensions.add("pssc");
+			extensions.add("cdxml");
+			languagesAndTheirSourceCodeFileExtensions.put("powershell", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("tcl");
+			extensions.add("tbc");
+			languagesAndTheirSourceCodeFileExtensions.put("tcl", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("groff");
+			extensions.add("roff");
+			extensions.add("mmse");
+			extensions.add("mom");
+			extensions.add("www");
+			extensions.add("me");
+			extensions.add("mm");
+			extensions.add("ms");
+			extensions.add("t");
+			extensions.add("tr");
+			extensions.add("tmac");
+			extensions.add("man");
+			languagesAndTheirSourceCodeFileExtensions.put("groff", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("xslt");
+			languagesAndTheirSourceCodeFileExtensions.put("xslt", extensions);
+			
+			extensions = new ArrayList<String>();
+			extensions.add("csv");
+			extensions.add("sql");
+			extensions.add("txt");
+			extensions.add("text");
+			extensions.add("xml");
+			extensions.add("json");
+			languagesAndTheirSourceCodeFileExtensions.put("Others-miscellaneous", extensions);		
+			
+			// Now, gathering all the extensions in a single object, allSourceCodeFileExtensions:
+			for (Map.Entry<String, ArrayList<String>> entry: languagesAndTheirSourceCodeFileExtensions.entrySet()) {
+//			    String programmingLanguage = entry.getKey();
+			    ArrayList<String> extensionsInThisProgrammingLanguage = entry.getValue();
+			    for (String extension: extensionsInThisProgrammingLanguage)
+					allSourceCodeFileExtensions.add(extension);
+			}
+		}
 		
-//		//This was ran successfully (2016/11/15):
-//		//Now, extract the occurrence of each tag:
-//		generateNodeAndEdgeWeights(Constants.DATASET_DIRECTORY_SO_3_TSV_CLEANED, "occurrences.tsv", "coOccurrences.tsv", 
-//				Constants.DATASET_DIRECTORY_SO_3_TSV_CLEANED, "nodeWeights.tsv", "edgeWeights.tsv",
-//				0.01, 5,
-//				1000000, 0, Constants.THIS_IS_REAL, "4");
+		//Reading Stopwords:
+		HashSet<String> stopWords = new HashSet<String>();
+		stopWords = TSVManipulations.readUniqueFieldFromTSV(stopWordsInputPath, stopWordsInputFileName, 0, 1, 
+				LogicalOperation.NO_CONDITION, 
+				0, ConditionType.NOTHING, "", FieldType.NOT_IMPORTANT, 
+				0, ConditionType.NOTHING, "", FieldType.NOT_IMPORTANT,
+				true, indentationLevel+1, 100000, Constants.THIS_IS_REAL, MyUtils.concatTwoWriteMessageSteps(writeMessageStep,"1"));
+		//Reading the source code files:
 		
-//		//The above methods will be called just once (to generate the output files):
+		MyUtils.println(MyUtils.concatTwoWriteMessageSteps(writeMessageStep,"2- Processing 13 projects:"), indentationLevel+1);
+		MyUtils.println("Started ...", indentationLevel+2);
 
+		File file = new File(inputPath);
+		String[] directories = file.list(new FilenameFilter() {
+			  @Override
+			  public boolean accept(File current, String name) {
+			    return new File(current, name).isDirectory();
+			  }
+			});
+		int j = 1;
+		for (String projectFolder: directories){
+			for (int k=0; k<13; k++){
+				if (projectFolder.toLowerCase().equals(Constants.listOf13Projects[k])){
+//					if (!projectFolder.equals("angular.js"))
+//						continue;
+					MyUtils.println(MyUtils.concatTwoWriteMessageSteps(writeMessageStep,"2-")+Integer.toString(j)+"- Processing " + projectFolder + ":", indentationLevel+2);
+					MyUtils.println("Started ...", indentationLevel+3);
+
+					//Make an arrayList for all files in a project:
+					ArrayList<File> files = new ArrayList<File>();
+					projectFolder = projectFolder.toLowerCase();
+
+					HashMap<String, Long> occurrences = new HashMap<String, Long>(); 
+					LongClass maxNumberOfOccurrences = new LongClass(0);
+
+					//Determining all files (and their paths) in this project:
+					listFiles(inputPath+"\\"+projectFolder, files);
+					//Reading the files in the project and counting the occurrences:
+					MyUtils.println("Total # of files to traverse: " + files.size(), indentationLevel+3);
+					
+					for (int i=0; i<files.size(); i++){ //Reading all files in this project:
+						String aFilePathAndName = files.get(i).toString();
+						boolean thisFileShouldBeConsidered = false;
+						if (onlyConsiderSourceCodeFiles){//: In this case, only check the source code extensions gathered in variable 
+							int startingIndexOfTheExtension = aFilePathAndName.lastIndexOf(".");
+							if (startingIndexOfTheExtension > -1 && startingIndexOfTheExtension < aFilePathAndName.length()-1){
+								String anExtension = aFilePathAndName.substring(startingIndexOfTheExtension+1);
+								if (allSourceCodeFileExtensions.contains(anExtension))
+									thisFileShouldBeConsidered = true;
+							}
+						}
+						else
+							thisFileShouldBeConsidered = true;
+						//Counting the occurrences:
+						if (thisFileShouldBeConsidered)
+							try{ 
+								BufferedReader br;
+								br = new BufferedReader(new FileReader(aFilePathAndName)); 
+								String s;
+								while ((s=br.readLine())!=null){
+									s = StringManipulations.clean(s).toLowerCase().replaceAll(Constants.allValidCharactersInSOURCECODE_Strict_ForRegEx, " ");
+									String[] words = s.split(" ");
+									updateOccurrences(words, stopWords, occurrences, maxNumberOfOccurrences);
+								}//while ((s=br....
+								br.close();
+							}catch (Exception e){
+								e.printStackTrace();
+							}			
+						if ((i+1) % (showProgressInterval/1000) == 0)
+							System.out.println(MyUtils.indent(indentationLevel+4) + Constants.integerFormatter.format(i+1));
+					}
+
+					//Calculating the term weights:			
+					TreeMap<String, Double> nodeWeights = new TreeMap<String, Double>();
+					for (Map.Entry<String, Long> entry: occurrences.entrySet()){
+						String keyword = entry.getKey();
+						Long occurrenceOfThisKeyword = entry.getValue();
+						if (occurrenceOfThisKeyword >= thresholdForOccurrenceOfKeywordToBeConsidered){
+							//calculate node weight and normalize it (by dividing it to log10(1+maxNumberOfOccurrences.get())):
+							double nodeWeight = Math.log10((1+(double)maxNumberOfOccurrences.get())/occurrenceOfThisKeyword) / Math.log10(1+maxNumberOfOccurrences.get());
+							nodeWeights.put(keyword, nodeWeight);
+						} // :if.     Else: do nothing!
+					}
+					//Saving the term weights in file:
+					String[] nodeFileTitles = {"Node", "Weight"};
+					TSVManipulations.saveKeyAndDoubleValuesAsTSVFile(outputPath, nodeWeightsOutputFileNamePrefix+projectFolder+".tsv", nodeWeights, 2, nodeFileTitles, true, 
+							showProgressInterval, indentationLevel+3, testOrReal, MyUtils.concatTwoWriteMessageSteps(writeMessageStep,"2-1-1"));
+					
+					MyUtils.println("Finished.", indentationLevel+3);
+					j++;
+					break;
+				}
+			}
+		}
 		
-		//These methods will be called just once (to generate the output files):
-		//Not ran yet! I am calling this method in prepareCompleteFinalData(). We won't need this (following line) anymore:
-//		cleanDataSetByConvertingConsecutiveKeywordsToOneTag(inputPath, outputPath, 1000, Constants.THIS_IS_A_TEST);
+		MyUtils.println("Finished.", indentationLevel+2);
 		
-		//extract ground truth (real bug fixes) ...
-		//make all files shorter.
-		//convert 'a b' to a-b' (if the first one isn't an SO tag and the second one is).
-		//clean tsv files (delete unused words)... 
-	}//prepareDataFiles().
+		MyUtils.println("Finished.", indentationLevel+1);
+		MyUtils.println("-----------------------------------", indentationLevel);	
+
+
+		Date d2 = new Date();
+		MyUtils.println("Total time: " + (float)(d2.getTime()-d1.getTime())/1000  + " seconds.", indentationLevel);
+		MyUtils.println("-----------------------------------", indentationLevel);
+		MyUtils.println("-----------------------------------", indentationLevel);
+	}
+	//------------------------------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------------------------------------------------
 	public static void sort8FilesBasedOnDate(String inputPath, String outputPath, //outputPath should be the "cleaned" directory 
@@ -2251,6 +2749,79 @@ public class DataPreparation {
 	}
 	//------------------------------------------------------------------------------------------------------------------------
 	//------------------------------------------------------------------------------------------------------------------------
+	public static void prepareDataFiles(){ 
+		//This method was moved from Algorithm.java
+		
+//		//This was ran successfully (2016/11/14):
+//		//First, convert the XML SO data set to TSV:
+//		XMLParser.xmlToTSV(Constants.DATASET_DIRECTORY_SO_1_XML_EXTERNAL, "Posts.xml", Constants.DATASET_DIRECTORY_SO_2_TSV, "Posts.tsv",  
+//		"Id$PostTypeId$OwnerUserId$ParentId$Score$[]Tags$CreationDate$AnswerCount$Title", 
+//		"&lt;", "&gt;", "\\&lt\\;", "\\&gt\\;", 
+//		"Title",
+//		500000, 0, Constants.THIS_IS_REAL, "1");
+
+
+		//This was ran successfully (2016/11/15):
+		//Now, extract the occurrence of each tag:
+//		extractOccurrencesOfTagsInSODataSet(Constants.DATASET_DIRECTORY_SO_2_TSV, "Posts.tsv", Constants.DATASET_DIRECTORY_SO_3_TSV_CLEANED, "occurrences.tsv", 
+//				1000000, 0, Constants.THIS_IS_REAL, "2");
+		
+		
+//		//This was ran successfully (2016/11/15):
+//		//This method will be called just once (to generate the output files):
+//		extractCoOccurrencesOfTagsInSODataSet(Constants.DATASET_DIRECTORY_SO_2_TSV, "Posts.tsv", Constants.DATASET_DIRECTORY_SO_3_TSV_CLEANED, "coOccurrences.tsv", 
+//				1000000, 0, Constants.THIS_IS_REAL, "3");
+//		//The above method ran successfully with the default downloaded SO data set (XML). Can be run again for the new data set.
+//		//In fact, in our tool, we should have had this output file (Parley was working on that but wasn't finished).
+
+		
+		
+//		//This was ran successfully (2016/11/15):
+//		//Now, extract the occurrence of each tag:
+//		generateNodeAndEdgeWeights(Constants.DATASET_DIRECTORY_SO_3_TSV_CLEANED, "occurrences.tsv", "coOccurrences.tsv", 
+//				Constants.DATASET_DIRECTORY_SO_3_TSV_CLEANED, "nodeWeights.tsv", "edgeWeights.tsv",
+//				0.01, 5,
+//				1000000, 0, Constants.THIS_IS_REAL, "4");
+
+		
+		
+////		//This was ran successfully (2018/12/05):
+		generateNodeAndEdgeWeights2_basedOnTextualElementsOfOurDataSet_bugsEtc(Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__GH__EXPERIMENT_TFIDF, 
+				Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__SO__EXPERIMENT, "stopWords.tsv", 
+				1 /*Only consider bugs*/, 
+				Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__GH__EXPERIMENT_MAIN, "nodeWeights2-bugs.tsv", 
+				1000000, 0, Constants.THIS_IS_REAL, "1");		
+		
+		
+////	//This was ran successfully (2018/12/05):
+//		generateNodeAndEdgeWeights2_basedOnTextualElementsOfOurDataSet_bugsEtc(Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__GH__EXPERIMENT_TFIDF, 
+//				Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__SO__EXPERIMENT, "stopWords.tsv", 
+//				6/*Consider bugs and commits etc.*/, 
+//				Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__GH__EXPERIMENT_MAIN, "nodeWeights2-bugsAndCommitsAndPRsEtc.tsv", 
+//				1000000, 0, Constants.THIS_IS_REAL, "2");
+		
+////	//This was ran successfully (2018/12/03):
+//		generateNodeAndEdgeWeights3_basedOnSourceCode(Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__SOURCE_CODES, Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__SO__EXPERIMENT, "stopWords.tsv", 
+//				Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__GH__EXPERIMENT_MAIN, "nodeWeights3-sourceCode-", 
+//				1, 
+//				true /*onlyConsiderSourceCodeFiles*/, 
+//				1000000, 0, Constants.THIS_IS_REAL, "1"); 
+		
+		
+//		//The above methods will be called just once (to generate the output files):
+
+		
+		//These methods will be called just once (to generate the output files):
+		//Not ran yet! I am calling this method in prepareCompleteFinalData(). We won't need this (following line) anymore:
+//		cleanDataSetByConvertingConsecutiveKeywordsToOneTag(inputPath, outputPath, 1000, Constants.THIS_IS_A_TEST);
+		
+		//extract ground truth (real bug fixes) ...
+		//make all files shorter.
+		//convert 'a b' to a-b' (if the first one isn't an SO tag and the second one is).
+		//clean tsv files (delete unused words)... 
+	}//prepareDataFiles().
+	//------------------------------------------------------------------------------------------------------------------------
+	//------------------------------------------------------------------------------------------------------------------------
 	public static void main(String[] args) {
 //		prepareDataFiles();
 
@@ -2299,11 +2870,10 @@ public class DataPreparation {
 //		System.out.println(s);
 ////		s = s.replaceAll(     "(?=\\S+)\\.(?!\\S)", " ");
 //		
+				
+		prepareDataFiles();
 		
-		
-		
-		
-		prepareCompleteFinalData();
+//		prepareCompleteFinalData();
 		
 		
 //		if (StringManipulations.specificFieldsOfTwoStringArraysAreEqual(s1, s2, "0$1$2$3"))
