@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import utils.Constants.BTOption7_whenToCountTextLength;
+import utils.Constants.GeneralExperimentType;
 
 public class WordsAndCounts {
 	public String[] words;
