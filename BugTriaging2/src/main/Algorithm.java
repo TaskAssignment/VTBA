@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
 
@@ -16,6 +17,7 @@ import data.Project;
 import utils.Constants;
 import utils.FileManipulationResult;
 import utils.Graph;
+import utils.LongClass;
 import utils.MyUtils;
 import utils.StringManipulations;
 import utils.TSVManipulations;
@@ -46,7 +48,9 @@ public class Algorithm {//test 9
 	public static final int INDEX_OF__EVIDENCE_TYPE__PR_COMMENT = 5;
 
 	// In the following method, bug assignment is experimented and the results are shown. Also summary is printed in output file <"results-"+currentDateTime.txt>.
-	public static void bugAssignment(String inputPath, String SOInputPath, String outputPath, String outputSummariesTSVFileName, 
+	public static void bugAssignment(String inputPath, String nodeWeightsInputPath, String nodeWeightsFileName, 
+			String additionalNodeWeightsInputPath, String additionalNodeWeightsInputFileNamePrefix, 
+			String outputPath, String outputSummariesTSVFileName, 
 			boolean isMainRun, int[] assignmentTypesToTriage, int[] evidenceTypes, int totalEvidenceTypes_count,  
 			String experimentTitle, String experimentDetails, 
 			BTOption1_whatToAddToAllBugs option1_whatToAddToAllBugs, BTOption2_w option2_w, BTOption3_TF option3_TF, BTOption4_IDF option4_IDF, BTOption5_prioritizePAs option5_prioritizePAs, BTOption6_whatToAddToAllCommits option6_whatToAddToAllCommits,  BTOption7_whenToCountTextLength option7_whenToCountTextLength, BTOption8_recency option8_recency,
@@ -67,18 +71,39 @@ public class Algorithm {//test 9
 		FileManipulationResult totalFMR = new FileManipulationResult();
 		MyUtils.createFolderIfDoesNotExist(outputPath, localFMR, 1, "Initial 'temp directory checking'");
 
+		MyUtils.println(MyUtils.concatTwoWriteMessageSteps(writeMessageStep, "1- Reading main graph and 13 project-specific graphs:"), indentationLevel);
+		MyUtils.println("Started ...", indentationLevel+1);
+
 		Graph graph = new Graph();
-		graph.loadGraph(SOInputPath, "nodeWeights.tsv", "edgeWeights.tsv", localFMR, 
-				wrapOutputInLines, showProgressInterval*1000, indentationLevel+1, Constants.THIS_IS_REAL, MyUtils.concatTwoWriteMessageSteps(writeMessageStep, "1"));
+		graph.loadGraph(nodeWeightsInputPath, nodeWeightsFileName, ""/*no edges to read*/, localFMR, 
+				wrapOutputInLines, showProgressInterval*1000, indentationLevel+1, Constants.THIS_IS_REAL, MyUtils.concatTwoWriteMessageSteps(writeMessageStep, "1-1- Main graph"));
+		
+		Graph[] graphs = new Graph[13];
+		if (generalExperimentType == GeneralExperimentType.CALCULATE_VTBA_SOURCECODE){
+			for (int i=0; i<13; i++){
+				graphs[i] = new Graph();
+				graphs[i].loadGraph(additionalNodeWeightsInputPath, additionalNodeWeightsInputFileNamePrefix+Constants.listOf13Projects[i]+".tsv", ""/*no edges to read*/, localFMR, 
+						wrapOutputInLines, showProgressInterval*1000, indentationLevel+1, Constants.THIS_IS_REAL, MyUtils.concatTwoWriteMessageSteps(writeMessageStep, "1-"+Integer.toString(i+2)));
+			}
+		}
+		MyUtils.println("Finished.", indentationLevel+1);
+		
 		totalFMR = MyUtils.addFileManipulationResults(totalFMR, localFMR);
 		HashSet<String> stopWords = new HashSet<String>();
-		if (generalExperimentType == GeneralExperimentType.JUST_CALCULATE_ORIGINAL_TF_IDF || generalExperimentType == GeneralExperimentType.JUST_CALCULATE_TIME_TF_IDF){
-			stopWords = TSVManipulations.readUniqueFieldFromTSV(SOInputPath, "stopWords.tsv", 0, 1, 
+		if (generalExperimentType == GeneralExperimentType.JUST_CALCULATE_ORIGINAL_TF_IDF 
+				|| generalExperimentType == GeneralExperimentType.JUST_CALCULATE_TIME_TF_IDF 
+				|| generalExperimentType == GeneralExperimentType.JUST_CALCULATE_TIME_TF_IDF2 
+				|| generalExperimentType == GeneralExperimentType.CALCULATE_TBA 
+				|| generalExperimentType == GeneralExperimentType.CALCULATE_VTBA_GH 
+				|| generalExperimentType == GeneralExperimentType.CALCULATE_VTBA_GH__CALCULATE_WEIGHS_ONLINE 
+				|| generalExperimentType == GeneralExperimentType.CALCULATE_VTBA_SOURCECODE){
+			stopWords = TSVManipulations.readUniqueFieldFromTSV(nodeWeightsInputPath, "stopWords.tsv", 0, 1, 
 					LogicalOperation.NO_CONDITION, 
 					0, ConditionType.NOTHING, "", FieldType.NOT_IMPORTANT, 
 					0, ConditionType.NOTHING, "", FieldType.NOT_IMPORTANT,
 					true, indentationLevel+1, 100000, Constants.THIS_IS_REAL, MyUtils.concatTwoWriteMessageSteps(writeMessageStep,"2"));
 		}
+		
 //		//Testing:
 //		System.out.println("Testing:");
 //		System.out.println("javascript: " + graph.getNodeWeight("javascript"));
@@ -169,7 +194,7 @@ public class Algorithm {//test 9
 				evidenceTypes, 
 				projects, null, 
 				projectId_Login_Tags_TypesAndTheirEvidence, 
-				graph, 
+				graph, graphs, 
 				option1_whatToAddToAllBugs, option2_w, option3_TF, option4_IDF, option5_prioritizePAs, option6_whatToAddToAllCommits, option7_whenToCountTextLength, 
 				generalExperimentType, 
 				wrapOutputInLines, showProgressInterval*100, indentationLevel+1, MyUtils.concatTwoWriteMessageSteps(writeMessageStep, "6"));
@@ -220,7 +245,7 @@ public class Algorithm {//test 9
 					if (evidenceTypes[0] == YES){ //: assignedBug
 						AlgPrep.indexAssignmentEvidence(Constants.EVIDENCE_TYPE[i], projectsAndTheirAssignments__AL_forDifferentAssignmetTypes.get(i),
 								projects, projectIdBugNumberAndTheirBugInfo, projectId_Login_Tags_TypesAndTheirEvidence, 
-								graph, localFMR, 
+								graph, graphs, localFMR, 
 								option1_whatToAddToAllBugs, option2_w, option3_TF, option4_IDF, option5_prioritizePAs, option6_whatToAddToAllCommits, option7_whenToCountTextLength, 
 								generalExperimentType, 
 								wrapOutputInLines, showProgressInterval*100, indentationLevel+3, MyUtils.concatTwoWriteMessageSteps(writeMessageStep, step+"-3"));
@@ -251,10 +276,21 @@ public class Algorithm {//test 9
 						totalFMR = MyUtils.addFileManipulationResults(totalFMR, localFMR);
 						if (AlgPrep.projectType(projectId, project.owner_repo) == ProjectType.FASE_13){
 							projectNamesAndTheirIds_orderedByName.put(project.owner_repo, projectId);
-							if (isMainRun || AlgPrep.isAProjectWhichIsUsedForTuning(projectId, project.owner_repo)){
+							if (
+									(isMainRun
+											&& AlgPrep.isAProjectWhichIsUsedForMainRun(projectId, project.owner_repo)
+									) 
+									|| (!isMainRun
+											&& AlgPrep.isAProjectWhichIsUsedForTuning(projectId, project.owner_repo)
+											)
+									){
 								if (wrapOutputInLines)
 									MyUtils.println("-----------------------------------", indentationLevel+4);
 								MyUtils.println(subStep+"-"+projectCounter+"- "+project.owner_repo+" (projectId: " + projectId + ")", indentationLevel+4);
+
+								Graph updatingGraph = new Graph();
+								HashMap<String, Long> occurrences = new HashMap<String, Long>(); 
+								LongClass maxNumberOfOccurrencesForAKeyword = new LongClass(0);
 
 								ArrayList<String[]> assignmentsOfThisProject = projectsAndTheirAssignments.get(projectId);
 								ArrayList<String[]> community = projectsAndTheirCommunities.get(projectId);
@@ -262,6 +298,8 @@ public class Algorithm {//test 9
 								HashMap<String, HashMap<String, HashMap<Integer, ArrayList<Evidence>>>> logins_Tags_TypesAndTheirEvidence = projectId_Login_Tags_TypesAndTheirEvidence.get(projectId);
 								HashMap<String, HashMap<String, Date>> wordsAnd_theDevelopersUsedThemUpToNow_lastUsageDate //"java"--> <"bob", 1/1/1>
 									= new HashMap<String, HashMap<String, Date>>();
+								HashMap<String, HashMap<String, HashSet<Date>>> wordsAnd_theDevelopersUsedThemUpToNow_allUsageDates //"java"--> <"bob", <2019/1/1, 2018/2/2, 2019/3/3, ...>>
+									= new HashMap<String, HashMap<String, HashSet<Date>>>();
 								
 								int numberOfBugsProcessed = 0;
 								HashSet<String> previousAssigneesInThisProject = new HashSet<>();
@@ -279,24 +317,45 @@ public class Algorithm {//test 9
 									int[] originalNumberOfWordsInBugText_array = new int[1];
 									String bugText = AlgPrep.getBugText(project, queryBug, originalNumberOfWordsInBugText_array, option1_whatToAddToAllBugs);
 									int originalNumberOfWordsInBugText = originalNumberOfWordsInBugText_array[0];
+									if (generalExperimentType == GeneralExperimentType.CALCULATE_TBA)
+										bugText = StringManipulations.clean(bugText.toLowerCase().replaceAll(Constants.allValidCharactersInSOURCECODE_Strict_ForRegEx, " "));
 									WordsAndCounts wAC = new WordsAndCounts(bugText, option7_whenToCountTextLength, originalNumberOfWordsInBugText, stopWords);
 									//
 									if (wAC.size == 0)
 										MyUtils.println("Warning: Empty bug text!", indentationLevel+5);
 									//	
+
+									//Calculating the term weights online, if needed:
+									if (generalExperimentType == GeneralExperimentType.CALCULATE_VTBA_GH__CALCULATE_WEIGHS_ONLINE){
+										String bugText2 = StringManipulations.clean(bugText).toLowerCase().replaceAll(Constants.allValidCharactersInSOURCECODE_Strict_ForRegEx, " ");
+										String[] words1 = bugText2.split(" ");
+										DataPreparation.updateOccurrences(words1, stopWords, occurrences, maxNumberOfOccurrencesForAKeyword);
+										for (String keyword: words1){
+											Long occurrenceOfThisKeyword;
+											double nodeWeight;
+
+											if (occurrences.containsKey(keyword)){
+												occurrenceOfThisKeyword = occurrences.get(keyword);
+												//calculate node weight and normalize it (by dividing it to log10(TOTAL_NUMBER_OF_SO_QUESTIONS)):
+												nodeWeight = Math.log10((1+(double)maxNumberOfOccurrencesForAKeyword.get())/occurrenceOfThisKeyword) / Math.log10(1+maxNumberOfOccurrencesForAKeyword.get());
+												updatingGraph.setNodeWeight(keyword, nodeWeight);
+											}
+										}
+									}
+
 									//Calculating the word count for idf:
 									for (int k=0; k<community.size(); k++){
 										String login = community.get(k)[0];
 										scores.put(login, 
 												AlgPrep.calculateScoreOfDeveloperForBugAssignment(
-														login, a, graph, 
+														login, a, graph, updatingGraph, 
 														i, evidenceTypesToConsider, evidenceTypesToConsider_count, 
 														logins_Tags_TypesAndTheirEvidence, 
 														previousAssigneesInThisProject, 
 														wAC, originalNumberOfWordsInBugText, 
 														j+1, 
 														project.overalStartingDate, 
-														generalExperimentType, community.size(), wordsAnd_theDevelopersUsedThemUpToNow_lastUsageDate, 
+														generalExperimentType, community.size(), wordsAnd_theDevelopersUsedThemUpToNow_lastUsageDate, wordsAnd_theDevelopersUsedThemUpToNow_allUsageDates, 
 														option2_w, option4_IDF, option5_prioritizePAs, option8_recency,
 														indentationLevel+5));
 									}
@@ -327,6 +386,28 @@ public class Algorithm {//test 9
 												HashMap<String, Date> developers_lastUsageDate = new HashMap<String, Date>();
 												developers_lastUsageDate.put(a.login, a.date);
 												wordsAnd_theDevelopersUsedThemUpToNow_lastUsageDate.put(wAC.words[k], developers_lastUsageDate);
+											}
+									}
+									if (generalExperimentType == GeneralExperimentType.JUST_CALCULATE_TIME_TF_IDF2){
+										for (int k=0; k<wAC.size; k++)
+											if (wordsAnd_theDevelopersUsedThemUpToNow_allUsageDates.containsKey(wAC.words[k])){
+												HashMap<String, HashSet<Date>> developers_allUsageDates = wordsAnd_theDevelopersUsedThemUpToNow_allUsageDates.get(wAC.words[k]);
+												if (developers_allUsageDates.containsKey(a.login)){// : means that this developer used this keyword before:  
+													HashSet<Date> allUsageDates = developers_allUsageDates.get(a.login);
+													allUsageDates.add(a.date);
+												}
+												else{//: means that this is the first time this developer used this keyword:
+													HashSet<Date> allUsageDates = new HashSet<Date>();
+													allUsageDates.add(a.date);
+													developers_allUsageDates.put(a.login, allUsageDates);
+												}
+											}
+											else{
+												HashSet<Date> allUsageDates = new HashSet<Date>();
+												allUsageDates.add(a.date);
+												HashMap<String, HashSet<Date>> developers_allUsageDates = new HashMap<String, HashSet<Date>>();
+												developers_allUsageDates.put(a.login, allUsageDates);
+												wordsAnd_theDevelopersUsedThemUpToNow_allUsageDates.put(wAC.words[k], developers_allUsageDates);
 											}
 									}
 
@@ -460,15 +541,21 @@ public class Algorithm {//test 9
 		GeneralExperimentType generalExperimentType = GeneralExperimentType.CALCULATE_OUR_METRIC__TTBA;
 //		GeneralExperimentType generalExperimentType = GeneralExperimentType.JUST_CALCULATE_ORIGINAL_TF_IDF;
 //		GeneralExperimentType generalExperimentType = GeneralExperimentType.JUST_CALCULATE_TIME_TF_IDF;
+//		GeneralExperimentType generalExperimentType = GeneralExperimentType.JUST_CALCULATE_TIME_TF_IDF2;
+//		GeneralExperimentType generalExperimentType = GeneralExperimentType.CALCULATE_TBA;
+//		GeneralExperimentType generalExperimentType = GeneralExperimentType.CALCULATE_VTBA_GH;
+//		GeneralExperimentType generalExperimentType = GeneralExperimentType.CALCULATE_VTBA_GH__CALCULATE_WEIGHS_ONLINE;
+//		GeneralExperimentType generalExperimentType = GeneralExperimentType.CALCULATE_VTBA_SOURCECODE;
 
-				
-//		boolean justCalculateOriginalTFIDF = true; //Un-comment this line and comment the next line if you want to run the TF-IDF experiment (which is only a small part of code) to compare against the results of the rest of this program (which is most of this code).
-//		boolean justCalculateOriginalTFIDF = false;
-		
+
 		//Threshold for considering assignments of developers who fixed at least N bugs: 
 			//Default: All bugs should be considered (no filtering); for default status, set the following number to "1":
 //		int developerFilterationThreshold_leastNumberOfBugsToFixToBeConsidered = 1435;
 		int developerFilterationThreshold_leastNumberOfBugsToFixToBeConsidered = 1;
+		String nodeWeightsInputPath = "";
+		String nodeWeightsInputFile = "";
+		String additionalNodeWeightsInputPath = "";
+		String additionalNodeWeightsInputFileNamePrefix = "";
 		
 //for (int num=0; num<2; num++)
 		for (BTOption1_whatToAddToAllBugs option1_whatToAddToAllBugs: BTOption1_whatToAddToAllBugs.values()){//: What to be added to the bugs by default.
@@ -478,10 +565,10 @@ public class Algorithm {//test 9
 //			if (option1_whatToAddToAllBugs != BTOption1_whatToAddToAllBugs.JUST_USE_BUG_TD && option1_whatToAddToAllBugs != BTOption1_whatToAddToAllBugs.ADD_ML)
 //				continue;
 			for (BTOption2_w option2_w: BTOption2_w.values()){//: Term weighting
-				if (option2_w != BTOption2_w.USE_TERM_WEIGHTING)
-					continue;
-//				if (option2_w != BTOption2_w.NO_TERM_WEIGHTING)
+//				if (option2_w != BTOption2_w.USE_TERM_WEIGHTING)
 //					continue;
+				if (option2_w != BTOption2_w.NO_TERM_WEIGHTING)
+					continue;
 				for (BTOption3_TF option3_TF: BTOption3_TF.values()){//: TF formula.
 //					if (option3_TF != BTOption3_TF.LOG_BASED) //In our previous experiment (results stored in Old4-DecidingAbout4Options folder) it was shown that this (BTOption3.LOG_BASED) has the best performance.
 //						continue;
@@ -538,14 +625,54 @@ public class Algorithm {//test 9
 										case JUST_CALCULATE_ORIGINAL_TF_IDF:
 											methodology = "OnlyOrigTFIDF";
 											inputDir = Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__GH__EXPERIMENT_TFIDF;
+											nodeWeightsInputPath = Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__SO__EXPERIMENT;
+											nodeWeightsInputFile = "nodeWeights.tsv";
 											break;
 										case JUST_CALCULATE_TIME_TF_IDF:
 											methodology = "OnlyTimeTFIDF";
 											inputDir = Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__GH__EXPERIMENT_TFIDF;
+											nodeWeightsInputPath = Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__SO__EXPERIMENT;
+											nodeWeightsInputFile = "nodeWeights.tsv";
+											break;
+										case JUST_CALCULATE_TIME_TF_IDF2:
+											methodology = "OnlyTimeTFIDF2";
+											inputDir = Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__GH__EXPERIMENT_TFIDF;
+											nodeWeightsInputPath = Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__SO__EXPERIMENT;
+											nodeWeightsInputFile = "nodeWeights.tsv";
+											break;
+										case CALCULATE_TBA:
+											methodology = "TBA";
+											inputDir = Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__GH__EXPERIMENT_TFIDF;
+											nodeWeightsInputPath = Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__SO__EXPERIMENT;
+											nodeWeightsInputFile = "nodeWeights.tsv";
+											break;
+										case CALCULATE_VTBA_GH:
+											methodology = "VTBA_GH";
+											inputDir = Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__GH__EXPERIMENT_TFIDF;
+											nodeWeightsInputPath = Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__GH__EXPERIMENT_MAIN;
+//											nodeWeightsInputFile = "nodeWeights2-bugs.tsv";
+											nodeWeightsInputFile = "nodeWeights2-bugsAndCommitsAndPRsEtc.tsv";
+											break;
+										case CALCULATE_VTBA_GH__CALCULATE_WEIGHS_ONLINE:
+											methodology = "VTBA_GH_ONLINE";
+											inputDir = Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__GH__EXPERIMENT_TFIDF;
+											nodeWeightsInputPath = Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__GH__EXPERIMENT_MAIN;
+//											nodeWeightsInputFile = "nodeWeights2-bugs.tsv";
+											nodeWeightsInputFile = "nodeWeights2-bugsAndCommitsAndPRsEtc.tsv";
+											break;
+										case CALCULATE_VTBA_SOURCECODE:
+											methodology = "VTBA_SOURCECODE";
+											inputDir = Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__GH__EXPERIMENT_TFIDF;
+											nodeWeightsInputPath = Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__SO__EXPERIMENT;
+											nodeWeightsInputFile = "nodeWeights.tsv";
+											additionalNodeWeightsInputPath = Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__GH__EXPERIMENT_MAIN;
+											additionalNodeWeightsInputFileNamePrefix = "nodeWeights3-sourceCode-";
 											break;
 										default: //CALCULATE_OUR_METRIC__TTBA
-											methodology = "OurTTBAMethod";
+											 methodology = "OurTTBAMethod";
 											inputDir = Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__GH__EXPERIMENT_MAIN;
+											nodeWeightsInputPath = Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__SO__EXPERIMENT;
+											nodeWeightsInputFile = "nodeWeights.tsv";
 											break;
 										}
 //										if (generalExperimentType == GeneralExperimentType.JUST_CALCULATE_ORIGINAL_TF_IDF){
@@ -645,9 +772,12 @@ public class Algorithm {//test 9
 										experimentTitle = experimentTitle + " - " + methodology;
 
 										FileManipulationResult fMR = new FileManipulationResult();
-//										for (int num=0; num<3; num++) 
+//										for (int num=0; num<3; num++)
+
 										for (int num=0; num<1; num++)
-											bugAssignment(inputDir, Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__SO__EXPERIMENT, Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__EXPERIMENT_OUTPUT, "outSum", 
+											bugAssignment(inputDir, nodeWeightsInputPath, nodeWeightsInputFile, 
+												additionalNodeWeightsInputPath, additionalNodeWeightsInputFileNamePrefix, 
+												Constants.DATASET_DIRECTORY_FOR_THE_ALGORITHM__EXPERIMENT_OUTPUT, "outSum",
 												isMainRun, assignmentTypesToTriage, evidenceTypes, totalEvidenceTypes_count, 
 												experimentTitle, "-",
 												option1_whatToAddToAllBugs, option2_w, option3_TF, option4_IDF, option5_prioritizePAs, option6_whatToAddToAllCommits, option7_whenToCountTextLength, option8_recency,
